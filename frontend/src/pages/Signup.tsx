@@ -1,48 +1,60 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Users, ArrowRight, Check } from 'lucide-react';
+import { Eye, EyeOff, Users, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/ThemeToggle';
-
-const features = [
-  'Free 14-day trial',
-  'No credit card required',
-  'Cancel anytime',
-];
+import api from '@/lib/api';
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: '',
-    companyName: '',
-    email: '',
-    password: '',
-  });
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For demo purposes, navigate to dashboard
-    navigate('/dashboard');
-  };
+    setLoading(true);
+    setError('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    try {
+      // Backend AuthController expects SignupRequest { username, email, password, roles: [] }
+      await api.post('/auth/signup', {
+        username,
+        email,
+        password,
+        roles: ["ROLE_USER"] // Default role
+      });
+
+      // Navigate to login on success
+      navigate('/login');
+    } catch (err: any) {
+      console.error('Registration failed', err);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || 'Registration failed.');
+      } else {
+        setError('Network error. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Gradient Background */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-accent via-primary to-accent">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-primary via-accent to-primary">
         {/* Animated shapes */}
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
-        
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1.5s' }} />
+
         {/* Grid pattern */}
-        <div 
+        <div
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: `linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px)`,
@@ -64,43 +76,11 @@ export default function Signup() {
               <span className="text-2xl font-display font-bold text-white">HRMS</span>
             </Link>
 
-            <h2 className="text-3xl xl:text-4xl font-display font-bold text-white mb-6">
-              Start your journey to better HR management
-            </h2>
-            
-            <ul className="space-y-4">
-              {features.map((feature, index) => (
-                <motion.li
-                  key={feature}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
-                  className="flex items-center gap-3 text-white/90"
-                >
-                  <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                    <Check className="h-4 w-4" />
-                  </div>
-                  {feature}
-                </motion.li>
-              ))}
-            </ul>
-
-            <div className="mt-12 flex items-center gap-4">
-              <div className="flex -space-x-2">
-                {['JD', 'AK', 'MB', 'SC'].map((initials, i) => (
-                  <div
-                    key={initials}
-                    className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-sm font-medium border-2 border-white/30"
-                    style={{ zIndex: 4 - i }}
-                  >
-                    {initials}
-                  </div>
-                ))}
-              </div>
-              <p className="text-white/80 text-sm">
-                Join 10,000+ companies using HRMS
+            <blockquote className="space-y-6">
+              <p className="text-2xl xl:text-3xl font-display text-white/90 leading-relaxed">
+                "Join thousands of companies managing their workforce efficiently with HRMS."
               </p>
-            </div>
+            </blockquote>
           </motion.div>
         </div>
       </div>
@@ -126,50 +106,39 @@ export default function Signup() {
           </Link>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-display font-bold mb-2">Create your account</h1>
+            <h1 className="text-3xl font-display font-bold mb-2">Create an Account</h1>
             <p className="text-muted-foreground">
-              Get started with your free trial today
+              Enter your details to get started
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
+                {error}
+              </div>
+            )}
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="fullName"
-                name="fullName"
+                id="username"
                 type="text"
-                placeholder="John Doe"
-                value={formData.fullName}
-                onChange={handleChange}
+                placeholder="Choose a username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="h-12"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input
-                id="companyName"
-                name="companyName"
-                type="text"
-                placeholder="Acme Inc."
-                value={formData.companyName}
-                onChange={handleChange}
-                className="h-12"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Work Email</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                name="email"
                 type="email"
                 placeholder="name@company.com"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="h-12"
                 required
               />
@@ -180,11 +149,10 @@ export default function Signup() {
               <div className="relative">
                 <Input
                   id="password"
-                  name="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a strong password"
-                  value={formData.password}
-                  onChange={handleChange}
+                  placeholder="Create a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="h-12 pr-12"
                   required
                 />
@@ -198,20 +166,22 @@ export default function Signup() {
               </div>
             </div>
 
-            <Button type="submit" variant="hero" size="lg" className="w-full group">
-              Create Account
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            <Button type="submit" variant="hero" size="lg" className="w-full group" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                <>
+                  Sign Up
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            By signing up, you agree to our{' '}
-            <a href="#" className="text-primary hover:underline">Terms of Service</a>
-            {' '}and{' '}
-            <a href="#" className="text-primary hover:underline">Privacy Policy</a>
-          </p>
-
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-8 text-center text-sm text-muted-foreground">
             Already have an account?{' '}
             <Link to="/login" className="text-primary font-medium hover:underline">
               Sign in
