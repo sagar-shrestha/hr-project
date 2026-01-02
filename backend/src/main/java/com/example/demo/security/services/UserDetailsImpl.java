@@ -12,6 +12,7 @@ import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,28 +34,50 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public static UserDetailsImpl build(User user) {
+    @Getter
+    private Set<String> roles;
+
+    public static UserDetailsImpl build(User user, Collection<String> allPermissions) {
+        // Extract actual user roles (not inherited from hierarchy)
+        Set<String> userRoles = user.getRoles().stream()
+                .map(role -> role.getName())
+                .collect(Collectors.toSet());
+        boolean isSuperAdmin = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals("ROLE_SUPER_ADMIN"));
+
         // Collect Roles
         List<GrantedAuthority> roleAuthorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
-        // Collect Permissions from all Roles
-        List<GrantedAuthority> permissionAuthorities = user.getRoles().stream()
-                .flatMap(role -> role.getPermissions().stream())
-                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
-                .collect(Collectors.toList());
+        List<GrantedAuthority> authorities;
+        if (isSuperAdmin && allPermissions != null) {
+            // For Super Admin, grant all system permissions explicitly
+            List<GrantedAuthority> permissionAuthorities = allPermissions.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
 
-        // Combine both
-        List<GrantedAuthority> authorities = Stream.concat(roleAuthorities.stream(), permissionAuthorities.stream())
-                .collect(Collectors.toList());
+            authorities = Stream.concat(roleAuthorities.stream(), permissionAuthorities.stream())
+                    .collect(Collectors.toList());
+        } else {
+            // Collect Permissions from all Roles for normal users
+            List<GrantedAuthority> permissionAuthorities = user.getRoles().stream()
+                    .flatMap(role -> role.getPermissions().stream())
+                    .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+                    .collect(Collectors.toList());
+
+            // Combine both
+            authorities = Stream.concat(roleAuthorities.stream(), permissionAuthorities.stream())
+                    .collect(Collectors.toList());
+        }
 
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities);
+                authorities,
+                userRoles);
     }
 
     @Override

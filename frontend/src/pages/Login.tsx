@@ -11,7 +11,6 @@ import api from '@/lib/api';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState(''); // Note: Backend expects 'username' not email for login generally, but check AuthController
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);

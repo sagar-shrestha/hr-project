@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.permission.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,11 @@ public class Permission {
     @Column(nullable = false, unique = true)
     private String name;
 
-    public Permission(String name) {
+    @Column(nullable = false, unique = true)
+    private String code;
+
+    public Permission(String name, String code) {
         this.name = name;
+        this.code = code;
     }
 }

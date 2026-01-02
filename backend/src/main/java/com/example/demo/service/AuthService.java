@@ -6,7 +6,7 @@ import com.example.demo.dto.response.JwtResponse;
 import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
-import com.example.demo.repository.RoleRepository;
+import com.example.demo.auth.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.jwt.JwtUtils;
 import com.example.demo.security.services.UserDetailsImpl;
@@ -83,6 +83,9 @@ public class AuthService {
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
         } else {
+            if (strRoles.contains("ROLE_SUPER_ADMIN")) {
+                throw new RuntimeException("Error: Cannot assign SUPER_ADMIN role!");
+            }
             strRoles.forEach(role -> {
                 Role foundedRole = roleRepository.findByName(role)
                         .orElseThrow(() -> new RuntimeException("Error: Role " + role + " is not found."));

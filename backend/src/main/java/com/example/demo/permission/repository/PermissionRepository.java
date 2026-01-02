@@ -1,6 +1,6 @@
-package com.example.demo.repository;
+package com.example.demo.permission.repository;
 
-import com.example.demo.model.Permission;
+import com.example.demo.permission.entity.Permission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

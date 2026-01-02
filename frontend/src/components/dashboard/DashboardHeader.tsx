@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Bell, Search, ChevronDown, User, Settings, LogOut } from 'lucide-react';
+import { Bell, Search, ChevronDown, User, Settings, Shield, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -19,6 +19,10 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ sidebarCollapsed }: DashboardHeaderProps) {
   const [notifications] = useState(3);
+  const userData = JSON.parse(localStorage.getItem('user') || '{}');
+  const displayName = userData.username || 'User';
+  const email = userData.email || 'user@example.com';
+  const initials = displayName.substring(0, 2).toUpperCase();
 
   return (
     <motion.header
@@ -66,16 +70,16 @@ export function DashboardHeader({ sidebarCollapsed }: DashboardHeaderProps) {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-2 pl-2 pr-3">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground text-sm font-medium">
-                JD
+                {initials}
               </div>
-              <span className="hidden md:block font-medium">John Doe</span>
+              <span className="hidden md:block font-medium">{displayName}</span>
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <div className="px-2 py-1.5">
-              <p className="font-medium">John Doe</p>
-              <p className="text-sm text-muted-foreground">john@company.com</p>
+              <p className="font-medium">{displayName}</p>
+              <p className="text-sm text-muted-foreground">{email}</p>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
@@ -85,6 +89,12 @@ export function DashboardHeader({ sidebarCollapsed }: DashboardHeaderProps) {
             <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
               Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/permissions" className="flex items-center w-full">
+                <Shield className="mr-2 h-4 w-4" />
+                Permission Setup
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
