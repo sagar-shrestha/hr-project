@@ -18,14 +18,15 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@Component
 public class DynamicAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
-    @Autowired
-    private EndpointRoleRepository endpointRoleRepository;
+    private final EndpointRoleRepository endpointRoleRepository;
+    private final RoleHierarchy roleHierarchy;
 
-    @Autowired
-    private RoleHierarchy roleHierarchy;
+    public DynamicAuthorizationManager(EndpointRoleRepository endpointRoleRepository, RoleHierarchy roleHierarchy) {
+        this.endpointRoleRepository = endpointRoleRepository;
+        this.roleHierarchy = roleHierarchy;
+    }
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 

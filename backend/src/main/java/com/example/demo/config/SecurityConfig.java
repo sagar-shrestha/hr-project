@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.security.DynamicAuthorizationManager;
 import com.example.demo.security.jwt.AuthEntryPointJwt;
 import com.example.demo.security.jwt.AuthTokenFilter;
 import com.example.demo.security.services.UserDetailsServiceImpl;
@@ -63,11 +64,15 @@ public class SecurityConfig {
         return roleHierarchy;
     }
 
-    @Autowired
-    com.example.demo.security.DynamicAuthorizationManager dynamicAuthorizationManager;
+    @Bean
+    public DynamicAuthorizationManager dynamicAuthorizationManager(
+            com.example.demo.repository.EndpointRoleRepository endpointRoleRepository, RoleHierarchy roleHierarchy) {
+        return new DynamicAuthorizationManager(endpointRoleRepository, roleHierarchy);
+    }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, DynamicAuthorizationManager dynamicAuthorizationManager)
+            throws Exception {
         http.csrf(org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer::disable)
                 .cors(org.springframework.security.config.Customizer.withDefaults())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
