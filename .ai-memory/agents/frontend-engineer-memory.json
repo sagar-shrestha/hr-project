@@ -1,0 +1,7 @@
+{
+  "known_modules": ["permissions", "attendance", "landing"],
+  "patterns_used": ["Standalone Components", "Tailwind CSS styling", "RxJS"],
+  "recent_tasks": ["Resolved layout issues with sticky header", "Implemented Attendance Chart UI", "Fixed Angular Material / SSR build issues"],
+  "known_risks": ["Potential SSR manifest errors during build if Tailwind isn't imported correctly"],
+  "open_issues": []
+}
