@@ -1,8 +1,8 @@
 package com.example.demo.security.services;
 
 import com.example.demo.model.User;
-import com.example.demo.permission.entity.Permission;
-import com.example.demo.permission.repository.PermissionRepository;
+import com.example.demo.model.Permission;
+import com.example.demo.repository.PermissionRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,11 +18,13 @@ import java.util.stream.Collectors;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PermissionRepository permissionRepository;
 
-    @Autowired
-    PermissionRepository permissionRepository;
+    public UserDetailsServiceImpl(UserRepository userRepository, PermissionRepository permissionRepository) {
+        this.userRepository = userRepository;
+        this.permissionRepository = permissionRepository;
+    }
 
     @Override
     @Transactional

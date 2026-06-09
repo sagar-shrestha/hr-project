@@ -1,7 +1,7 @@
-package com.example.demo.permission.service;
+package com.example.demo.service;
 
-import com.example.demo.permission.entity.Permission;
-import com.example.demo.permission.repository.PermissionRepository;
+import com.example.demo.model.Permission;
+import com.example.demo.repository.PermissionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

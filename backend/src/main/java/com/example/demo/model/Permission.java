@@ -1,4 +1,4 @@
-package com.example.demo.permission.entity;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

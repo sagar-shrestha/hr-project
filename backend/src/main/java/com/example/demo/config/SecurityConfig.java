@@ -3,6 +3,7 @@ package com.example.demo.config;
 import com.example.demo.security.DynamicAuthorizationManager;
 import com.example.demo.security.jwt.AuthEntryPointJwt;
 import com.example.demo.security.jwt.AuthTokenFilter;
+import com.example.demo.security.jwt.JwtUtils;
 import com.example.demo.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,15 +26,20 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    
+    private final UserDetailsServiceImpl userDetailsService;
+    private final AuthEntryPointJwt unauthorizedHandler;
+    private final JwtUtils jwtUtils;
 
-    @Autowired
-    AuthEntryPointJwt unauthorizedHandler;
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler, JwtUtils jwtUtils) {
+        this.userDetailsService = userDetailsService;
+        this.unauthorizedHandler = unauthorizedHandler;
+        this.jwtUtils = jwtUtils;
+    }
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+        return new AuthTokenFilter(jwtUtils, userDetailsService);
     }
 
     @Bean

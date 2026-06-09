@@ -1,7 +1,7 @@
-package com.example.demo.permission.controller;
+package com.example.demo.controller;
 
-import com.example.demo.permission.entity.Permission;
-import com.example.demo.permission.service.PermissionService;
+import com.example.demo.model.Permission;
+import com.example.demo.service.PermissionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

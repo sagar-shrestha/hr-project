@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import com.example.demo.permission.entity.Permission;
+import com.example.demo.model.Permission;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

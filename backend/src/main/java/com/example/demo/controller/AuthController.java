@@ -1,4 +1,4 @@
-package com.example.demo.auth.controller;
+package com.example.demo.controller;
 
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.SignupRequest;
@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    @Autowired
-    AuthService authService;
+    
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
