@@ -2,9 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.SignupRequest;
+import com.example.demo.dto.response.JwtResponse;
+import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.service.AuthService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,12 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authService.authenticateUser(loginRequest));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         return ResponseEntity.ok(authService.registerUser(signUpRequest));
     }
 }
