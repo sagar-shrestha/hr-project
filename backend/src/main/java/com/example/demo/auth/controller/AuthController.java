@@ -1,24 +1,22 @@
-package com.example.demo.controller;
+package com.example.demo.auth.controller;
 
-import com.example.demo.dto.request.LoginRequest;
-import com.example.demo.dto.request.SignupRequest;
-import com.example.demo.dto.response.JwtResponse;
-import com.example.demo.dto.response.MessageResponse;
-import com.example.demo.service.AuthService;
+import com.example.demo.security.dto.request.LoginRequest;
+import com.example.demo.security.dto.request.SignupRequest;
+import com.example.demo.security.dto.response.JwtResponse;
+import com.example.demo.security.dto.response.MessageResponse;
+import com.example.demo.auth.service.AuthService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
     
     private final AuthService authService;
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
 
     @PostMapping("/signin")
     public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {

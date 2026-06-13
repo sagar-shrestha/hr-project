@@ -1,15 +1,18 @@
-package com.example.demo.dto.request;
+package com.example.demo.security.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 
 @Getter
 @Setter
+@Builder
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class SignupRequest {
     @NotBlank
     @Size(min = 3, max = 20)

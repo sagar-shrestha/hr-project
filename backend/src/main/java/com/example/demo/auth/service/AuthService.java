@@ -1,16 +1,16 @@
-package com.example.demo.service;
+package com.example.demo.auth.service;
 
-import com.example.demo.dto.request.LoginRequest;
-import com.example.demo.dto.request.SignupRequest;
-import com.example.demo.dto.response.JwtResponse;
-import com.example.demo.dto.response.MessageResponse;
-import com.example.demo.model.Role;
-import com.example.demo.model.User;
+import com.example.demo.security.dto.request.LoginRequest;
+import com.example.demo.security.dto.request.SignupRequest;
+import com.example.demo.security.dto.response.JwtResponse;
+import com.example.demo.security.dto.response.MessageResponse;
+import com.example.demo.security.model.Role;
+import com.example.demo.security.model.User;
 import com.example.demo.repository.RoleRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.security.repository.UserRepository;
 import com.example.demo.security.jwt.JwtUtils;
 import com.example.demo.security.services.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -32,14 +33,6 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
-
-    public AuthService(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.encoder = encoder;
-        this.jwtUtils = jwtUtils;
-    }
 
     public JwtResponse authenticateUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(

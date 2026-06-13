@@ -1,6 +1,6 @@
 package com.example.demo.security.services;
 
-import com.example.demo.model.User;
+import com.example.demo.security.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,11 +1,11 @@
-package com.example.demo.controller;
+package com.example.demo.security.controller;
 
-import com.example.demo.dto.request.SignupRequest;
-import com.example.demo.dto.response.MessageResponse;
-import com.example.demo.dto.response.UserResponse;
+import com.example.demo.security.dto.request.SignupRequest;
+import com.example.demo.security.dto.response.MessageResponse;
+import com.example.demo.security.dto.response.UserResponse;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +15,11 @@ import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'MODERATOR')")

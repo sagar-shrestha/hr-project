@@ -1,14 +1,12 @@
-package com.example.demo.security;
+package com.example.demo.security.auth_manager;
 
-import com.example.demo.model.EndpointRole;
+import com.example.demo.security.model.EndpointRole;
 import com.example.demo.repository.EndpointRoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 

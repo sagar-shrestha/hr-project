@@ -1,10 +1,9 @@
 package com.example.demo.security.services;
 
-import com.example.demo.model.User;
-import com.example.demo.model.Permission;
-import com.example.demo.repository.PermissionRepository;
-import com.example.demo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.security.model.User;
+import com.example.demo.security.model.Permission;
+import com.example.demo.permission.repository.PermissionRepository;
+import com.example.demo.security.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
