@@ -2,11 +2,8 @@
 INSERT INTO roles (name) VALUES ('ROLE_SUPER_ADMIN') ON CONFLICT (name) DO NOTHING;
 
 -- Insert Super Admin User (adminuser / Admin@admin123)
--- BCrypt hash for Admin@admin123 is $2a$10$8.UnVuG9HHgffUDAlk8q2OuVGkqRzgVymYGr1V.9UToWGCtG6o.Oq (This is for 'password' as placeholder)
--- Real BCrypt for Admin@admin123: $2a$10$X.p.r.e.s.s.i.v.e.V.e.r.s.i.o.n.O.f.A.d.m.i.n.P.a.s.s.w.o.r.d
--- I will use a valid BCrypt hash for 'Admin@admin123'
 INSERT INTO users (username, email, password) 
-VALUES ('adminuser', 'admin@example.com', '$2a$10$7Pma6El7xwutKqFhxSgFGeJ.Xk7v1pLhF1gW0Yy/0U8V.Z2W1Z2W1')
+VALUES ('adminuser', 'admin@example.com', '$2a$10$65X/VN2fhavA.lt6/QYYROsle9yA7AxJ8SVseZuBnnvI7.ch3itxe')
 ON CONFLICT (username) DO NOTHING;
 
 -- Link adminuser to ROLE_SUPER_ADMIN

@@ -11,6 +11,11 @@
   - Springdoc OpenAPI (Swagger) for API documentation
   - Lombok for boilerplate reduction
 - **Build Tool:** Maven
+- **Package Layout (`backend/src/main/java/com/sagar/hr`):**
+  - `auth/`: Endpoint controller and service logic for User authentication.
+  - `security/`: Spring security configuration, JWT tokens management, and User entities/repositories.
+  - `permission/`: Permission model mapping, service logic, and database persistence.
+  - `util/`: Shared error models, exception handling `@RestControllerAdvice`, and common constants.
 
 ## 2. Frontend (`/frontend`)
 - **Language:** TypeScript (~5.9.2)

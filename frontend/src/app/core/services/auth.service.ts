@@ -8,7 +8,7 @@ import { tap } from 'rxjs/operators';
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/auth';
+  private readonly API_URL = 'http://localhost:8080/api/v1/auth';
 
   currentUser = signal<User | null>(null);
   token = signal<string | null>(localStorage.getItem('token'));

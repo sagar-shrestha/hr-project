@@ -31,6 +31,13 @@ Architecture:
 
 The objective is long-term maintainability, consistency, scalability, and security.
 
+Base Package:
+`com.sagar.hr`
+
+All backend classes must reside under `com.sagar.hr.*`.
+- Business feature packages (e.g., `com.sagar.hr.auth`, `com.sagar.hr.permission`, `com.sagar.hr.security`).
+- Global utilities, exceptions, handlers, and shared POJOs under `com.sagar.hr.util`.
+
 ---
 
 # AI Operating Rules
@@ -231,16 +238,14 @@ RuntimeException
 Exception
 ```
 
-Always create specific exceptions.
+Always create or use specific exceptions.
 
-Examples:
+Common utilities/exceptions are defined under `com.sagar.hr.util.exception`:
+- `NotFoundException` (use when resource is not found)
+- `AlreadyInUseException` (use when resource/email/username is already in use)
+- `NotAbleTOAssignException` (use when operation/role assignment is invalid or disallowed)
 
-```java
-EmployeeNotFoundException
-RoleNotFoundException
-DuplicateEmployeeException
-LeaveBalanceExceededException
-```
+For feature-specific exceptions, inherit from appropriate base/custom exceptions.
 
 Use:
 
@@ -248,7 +253,18 @@ Use:
 @RestControllerAdvice
 ```
 
-for centralized exception handling.
+in `com.sagar.hr.util.handler.GlobalExceptionHandler` for centralized exception handling. All exceptions caught by the handler must return a `ResponseEntity` enclosing a `GlobalApiResponse` (`com.sagar.hr.util.pojo.response.GlobalApiResponse`):
+
+```java
+public class GlobalApiResponse {
+    private Integer httpStatus;
+    private String message;
+    private Object data;
+    private boolean status;
+}
+```
+
+Use standard message strings defined in `com.sagar.hr.util.util.CommonMessages` (such as `SOMETHING_WENT_WRONG`) where applicable.
 
 ---
 
@@ -528,16 +544,15 @@ Do not introduce NgRx prematurely.
 # Code Quality Rules
 
 Priorities:
-
 1. Correctness
 2. Security
 3. Maintainability
 4. Readability
 5. Performance
 
-Never sacrifice maintainability for cleverness.
-
-Prefer explicit code over magic.
+- Never sacrifice maintainability for cleverness.
+- Prefer explicit code over magic.
+- Cleanliness: Always remove unused imports and keep import statements clean and organized.
 
 ---
 

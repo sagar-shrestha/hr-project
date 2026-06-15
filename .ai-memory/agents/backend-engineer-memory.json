@@ -1,7 +1,22 @@
 {
-  "known_modules": ["permission", "user", "security", "roles"],
-  "patterns_used": ["Controller-Service-Repository", "Constructor Injection", "JWT stateless authentication"],
-  "recent_tasks": ["Refactored Permission module to Service pattern", "Fixed circular dependency in SecurityConfig"],
-  "known_risks": ["Potential circular dependencies if field injection is used for Security beans"],
+  "known_modules": ["permission", "user", "security", "roles", "util"],
+  "patterns_used": [
+    "Controller-Service-Repository",
+    "Constructor Injection",
+    "JWT stateless authentication",
+    "GlobalExceptionHandler",
+    "GlobalApiResponse"
+  ],
+  "recent_tasks": [
+    "Refactored Permission module to Service pattern",
+    "Fixed circular dependency in SecurityConfig",
+    "Renamed base package to com.sagar.hr and refactored layout",
+    "Added GlobalExceptionHandler and GlobalApiResponse wrappers under com.sagar.hr.util",
+    "Refactored API paths to use /api/v1 versioned endpoints in backend and frontend"
+  ],
+  "known_risks": [
+    "Potential circular dependencies if field injection is used for Security beans",
+    "Ensure all new endpoints/controllers are mapped under /api/v1 and catch errors via GlobalExceptionHandler"
+  ],
   "open_issues": []
 }

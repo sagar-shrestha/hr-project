@@ -1,6 +1,22 @@
-version: '3.8'
-
 services:
+  backup:
+    image: postgres:15-alpine
+    container_name: auth_backup
+    restart: "no"
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    volumes:
+      - ./backups:/backups
+      - ./scripts:/scripts
+    environment:
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_NAME: auth_db
+      PGPASSWORD: postgres
+    entrypoint: ["/bin/sh", "-c", "apk add --no-cache bash > /dev/null 2>&1 && /scripts/backup.sh"]
+
   app:
     build: .
     container_name: auth_app
@@ -24,6 +40,12 @@ services:
       POSTGRES_DB: auth_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d auth_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

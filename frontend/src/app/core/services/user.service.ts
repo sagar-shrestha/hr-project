@@ -7,7 +7,7 @@ import { User } from '../models/user.model';
 })
 export class UserService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api/users';
+  private readonly API_URL = 'http://localhost:8080/api/v1/users';
 
   getUsers() {
     return this.http.get<User[]>(this.API_URL);

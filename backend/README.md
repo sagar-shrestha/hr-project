@@ -23,6 +23,14 @@ Since your local environment uses Java 8, **you must use Docker** to run this pr
    docker logs -f auth_app
    ```
 
+## Database Backups
+
+A backup is automatically created each time Docker Compose starts via the `backup` service. Backups are stored in `backend/backups/` with filenames like `auth_db_20260616_120000.sql.gz`.
+
+- **Rotation**: Only the **10 most recent** backups are kept; older ones are removed automatically.
+- **Manual backup**: Run `scripts/backup.sh` at any time (requires running `auth_db` container).
+- **Restore**: Use `gunzip -c backups/auth_db_<timestamp>.sql.gz | docker exec -i auth_db psql -U postgres -d auth_db`
+
 ## Testing the API
 You can use `curl` or Postman.
 
