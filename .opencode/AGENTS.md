@@ -13,3 +13,11 @@ When implementing a feature:
 6. Reuse mapper patterns.
 
 Output production-ready code only.
+
+## MCP Tools
+
+This project has a PostgreSQL MCP server configured. Use it to:
+- Explore database schema: `schema` - list columns, types, and keys for tables
+- List tables: `list_tables` - show all tables with disk size
+- Query data: `query` - execute read-only SELECT queries
+- Get table structure: `schema` with table name filter

@@ -23,7 +23,7 @@ import { LucideAngularModule, Users, Calendar, Briefcase, TrendingUp, MoreVertic
 
       <!-- Main Content -->
       <main
-        [class]="'pt-24 pb-12 px-6 lg:px-10 transition-all duration-300 ease-in-out ' + 
+        [class]="'pt-32 pb-12 px-6 lg:px-10 transition-all duration-300 ease-in-out ' + 
                  (sidebarService.mobileOpen() ? 'opacity-50 pointer-events-none md:opacity-100 md:pointer-events-auto' : '')"
         [style.margin-left]="sidebarService.collapsed() || sidebarService.isMobile() ? (sidebarService.isMobile() ? '0' : '80px') : '280px'"
       >

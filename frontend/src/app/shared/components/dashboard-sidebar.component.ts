@@ -57,6 +57,7 @@ import { ButtonComponent } from './button.component';
               <a
                 [routerLink]="item.path"
                 routerLinkActive="bg-sidebar-accent/10 text-sidebar-accent shadow-sm border-l-4 border-sidebar-accent"
+                [routerLinkActiveOptions]="{ exact: item.path === '/dashboard' }"
                 class="flex items-center gap-4 px-3 py-3 rounded-xl text-sidebar-foreground/70 hover:bg-sidebar-accent/5 hover:text-sidebar-accent transition-all duration-200 group relative"
                 (click)="sidebarService.setMobileOpen(false)"
               >
@@ -118,7 +119,7 @@ export class DashboardSidebarComponent {
 
   navigationItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { label: 'User Management', path: '/dashboard/users', icon: Users, role: 'ROLE_ADMIN' },
+    { label: 'User Management', path: '/users', icon: Users, role: 'ROLE_ADMIN' },
     { label: 'Permissions', path: '/permissions', icon: ShieldCheck, role: 'ROLE_SUPER_ADMIN' },
     { label: 'Attendance', path: '/dashboard/attendance', icon: Calendar },
     { label: 'Jobs', path: '/dashboard/jobs', icon: Briefcase },

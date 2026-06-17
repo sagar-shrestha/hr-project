@@ -11,11 +11,11 @@ import { LucideAngularModule, Shield, ShieldCheck, ShieldAlert, Settings } from 
   selector: 'app-permissions',
   standalone: true,
   imports: [
-    CommonModule, 
-    DashboardSidebarComponent, 
-    DashboardHeaderComponent, 
-    CardComponent, 
-    CardHeaderComponent, 
+    CommonModule,
+    DashboardSidebarComponent,
+    DashboardHeaderComponent,
+    CardComponent,
+    CardHeaderComponent,
     CardTitleComponent,
     CardContentComponent,
     BadgeComponent,
@@ -27,7 +27,7 @@ import { LucideAngularModule, Shield, ShieldCheck, ShieldAlert, Settings } from 
       <app-dashboard-header />
 
       <main
-        [class]="'pt-24 pb-12 px-6 lg:px-10 transition-all duration-300 ease-in-out ' + 
+        [class]="'pt-32 pb-12 px-6 lg:px-10 transition-all duration-300 ease-in-out ' +
                  (sidebarService.mobileOpen() ? 'opacity-50 pointer-events-none md:opacity-100 md:pointer-events-auto' : '')"
         [style.margin-left]="sidebarService.collapsed() || sidebarService.isMobile() ? (sidebarService.isMobile() ? '0' : '80px') : '280px'"
       >
@@ -42,7 +42,7 @@ import { LucideAngularModule, Shield, ShieldCheck, ShieldAlert, Settings } from 
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
              @for (role of roles; track role.name; let i = $index) {
-                <app-card 
+                <app-card
                   class="border-border/50 shadow-soft hover:shadow-glow transition-all duration-500 rounded-3xl overflow-hidden group"
                   [style.animation-delay]="i * 0.1 + 's'"
                 >
@@ -87,23 +87,23 @@ export class PermissionsComponent {
   ShieldCheckIcon = ShieldCheck;
 
   roles = [
-    { 
-      name: 'SUPER_ADMIN', 
-      level: 'Full Access', 
-      icon: Shield, 
-      permissions: ['Manage Admins', 'System Configuration', 'Audit Logs', 'Billing Access', 'All User Data'] 
+    {
+      name: 'SUPER_ADMIN',
+      level: 'Full Access',
+      icon: Shield,
+      permissions: ['Manage Admins', 'System Configuration', 'Audit Logs', 'Billing Access', 'All User Data']
     },
-    { 
-      name: 'ADMIN', 
-      level: 'Management', 
-      icon: ShieldAlert, 
-      permissions: ['Manage Moderators', 'Manage Users', 'View Reports', 'Edit Content'] 
+    {
+      name: 'ADMIN',
+      level: 'Management',
+      icon: ShieldAlert,
+      permissions: ['Manage Moderators', 'Manage Users', 'View Reports', 'Edit Content']
     },
-    { 
-      name: 'MODERATOR', 
-      level: 'Oversight', 
-      icon: Settings, 
-      permissions: ['Manage Users', 'View Dashboard', 'Basic Reports'] 
+    {
+      name: 'MODERATOR',
+      level: 'Oversight',
+      icon: Settings,
+      permissions: ['Manage Users', 'View Dashboard', 'Basic Reports']
     }
   ];
 }

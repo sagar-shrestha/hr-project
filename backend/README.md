@@ -37,14 +37,14 @@ You can use `curl` or Postman.
 ### 1. Register a User
 *Note: We use `ROLE_USER` exactly as expected by the backend.*
 ```bash
-curl -i -X POST http://localhost:8080/api/auth/signup \
+curl -i -X POST http://localhost:8080/api/v1/auth/signup \
   -H "Content-Type: application/json" \
   -d '{"username": "sagar", "email": "sagar@test.com", "password": "password123", "roles": ["ROLE_USER"]}'
 ```
 
 ### 2. Login
 ```bash
-curl -i -X POST http://localhost:8080/api/auth/signin \
+curl -i -X POST http://localhost:8080/api/v1/auth/signin \
   -H "Content-Type: application/json" \
   -d '{"username": "sagar", "password": "password123"}'
 ```
@@ -53,7 +53,9 @@ curl -i -X POST http://localhost:8080/api/auth/signin \
 {
   "token": "eyJhbGciOiJIUzI1NiJ9...",
   "type": "Bearer",
+  "id": 1,
   "username": "sagar",
+  "email": "sagar@test.com",
   "roles": ["ROLE_USER"]
 }
 ```
@@ -61,8 +63,14 @@ curl -i -X POST http://localhost:8080/api/auth/signin \
 ### 3. Access Protected Endpoint
 Copy the `token` from the login response.
 ```bash
-curl -i -H "Authorization: Bearer <YOUR_TOKEN>" http://localhost:8080/api/test/user
+curl -i -H "Authorization: Bearer <YOUR_TOKEN>" http://localhost:8080/api/v1/permissions
 ```
+
+### 4. Seeded Admin User
+A super admin user is pre-seeded in the database:
+- **Username**: `adminuser`
+- **Password**: `Admin@admin123`
+- **Role**: `ROLE_SUPER_ADMIN` (has access to all endpoints)
 
 ## Project Structure
 - `SecurityConfig`: Configures JWT filter and public/private endpoints.
@@ -72,4 +80,6 @@ curl -i -H "Authorization: Bearer <YOUR_TOKEN>" http://localhost:8080/api/test/u
 
 ## Notes
 - **Swagger UI**: Access at [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html) (Note: You may need to authenticate via the "Authorize" button using the Bearer token).
+- **Frontend**: Angular dev server at [http://localhost:4200](http://localhost:4200)
 - **Database**: Port `5432` is exposed locally. Connect with `dbeaver` or any client using `user: postgres`, `password: postgres`.
+- **Seeded Admin**: Username `adminuser`, Password `Admin@admin123` (has `ROLE_SUPER_ADMIN` with full access).

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "postgres": {
+      "type": "local",
+      "command": ["npx", "-y", "@sarmadparvez/postgresql-mcp", "postgresql://postgres:postgres@localhost:5432/auth_db?mode=readonly"],
+      "enabled": true
+    }
+  }
+}

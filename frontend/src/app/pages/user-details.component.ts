@@ -15,11 +15,11 @@ import { LucideAngularModule, ArrowLeft, Mail, User as UserIcon, Shield } from '
   selector: 'app-user-details',
   standalone: true,
   imports: [
-    CommonModule, 
-    DashboardSidebarComponent, 
-    DashboardHeaderComponent, 
-    CardComponent, 
-    CardHeaderComponent, 
+    CommonModule,
+    DashboardSidebarComponent,
+    DashboardHeaderComponent,
+    CardComponent,
+    CardHeaderComponent,
     CardTitleComponent,
     CardContentComponent,
     BadgeComponent,
@@ -32,7 +32,7 @@ import { LucideAngularModule, ArrowLeft, Mail, User as UserIcon, Shield } from '
       <app-dashboard-header />
 
       <main
-        [class]="'pt-24 pb-8 px-6 lg:px-8 transition-all duration-300 ease-in-out'"
+        [class]="'pt-40 pb-8 px-6 lg:px-8 transition-all duration-300 ease-in-out'"
         [style.margin-left]="sidebarService.collapsed() ? '80px' : '280px'"
       >
         <div class="max-w-4xl mx-auto space-y-8 animate-fade-in">
@@ -142,6 +142,6 @@ export class UserDetailsComponent implements OnInit {
   }
 
   goBack() {
-     this.router.navigate(['/dashboard/users']);
+     this.router.navigate(['/users']);
   }
 }
