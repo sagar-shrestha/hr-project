@@ -1,5 +1,6 @@
 package com.sagar.hr.util.handler;
 
+import com.sagar.hr.leave.exception.InsufficientLeaveBalanceException;
 import com.sagar.hr.util.exception.AlreadyInUseException;
 import com.sagar.hr.util.exception.NotAbleTOAssignException;
 import com.sagar.hr.util.exception.NotFoundException;
@@ -52,6 +53,39 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.NOT_ACCEPTABLE.value())
+                .message(ex.getMessage())
+                .data(null)
+                .status(false)
+                .build());
+    }
+
+    @ExceptionHandler(InsufficientLeaveBalanceException.class)
+    public ResponseEntity<GlobalApiResponse> handleInsufficientLeaveBalanceException(InsufficientLeaveBalanceException ex) {
+        return ResponseEntity.ok(GlobalApiResponse
+                .builder()
+                .httpStatus(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .data(null)
+                .status(false)
+                .build());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<GlobalApiResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.ok(GlobalApiResponse
+                .builder()
+                .httpStatus(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .data(null)
+                .status(false)
+                .build());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<GlobalApiResponse> handleIllegalStateException(IllegalStateException ex) {
+        return ResponseEntity.ok(GlobalApiResponse
+                .builder()
+                .httpStatus(HttpStatus.CONFLICT.value())
                 .message(ex.getMessage())
                 .data(null)
                 .status(false)

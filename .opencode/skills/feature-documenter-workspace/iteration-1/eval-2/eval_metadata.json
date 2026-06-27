@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "eval_name": "attendance-summary-endpoint",
+  "prompt": "Add a new REST endpoint GET /api/v1/reports/attendance-summary that returns daily attendance counts (present, absent, late, leave) grouped by department for a given date range. The response should be JSON with department name and counts. Put the controller in com.sagar.hr.reporting.",
+  "assertions": [
+    "docs/api/Readme.md has the attendance-summary endpoint listed",
+    "docs/changelog/ has an entry for this session",
+    "The API doc entry includes method, path, and description",
+    "No feature doc was created (this is an addition to existing functionality, not a new feature)"
+  ]
+}

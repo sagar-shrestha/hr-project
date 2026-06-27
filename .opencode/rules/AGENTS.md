@@ -8,9 +8,9 @@ When starting any task, read from ALL of these directories for full context:
 
 | Directory | What to read | Purpose |
 |---|---|---|
-| `.agent/rules/` | `AGENTS.md`, `HR-REQUIREMENT.md` | Project dev guide, Nepali domain rules |
+| `.opencode/rules/` | `AGENTS.md`, `hr-project-rrules.md` | Project dev rules, coding standards, architecture |
+| `.opencode/skills/` | `HR-REQUIREMENT.md`, `project-memory.md`, `architecture-memory.md`, `design-memory.md`, `agents/*.json`, `decisions/` | Nepali domain knowledge, project memory, historical decisions |
 | `.opencode/` | `AGENTS.md` | OpenCode instructions, MCP PostgreSQL tools |
-| `.ai-memory/` | `project-memory.md`, `architecture-memory.md`, `design-memory.md`, `agents/*.json`, `decisions/` | Historical decisions, known risks, patterns, business context |
 
 ---
 

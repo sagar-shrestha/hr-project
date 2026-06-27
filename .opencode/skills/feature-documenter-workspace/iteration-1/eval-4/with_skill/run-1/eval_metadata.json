@@ -1,0 +1,11 @@
+{
+  "eval_id": 4,
+  "eval_name": "redis-caching-adr",
+  "prompt": "I want to introduce Redis caching for payroll calculations because they're slow. Put it behind an interface so we can swap implementations later. The cache should invalidate when salary structures change. Create an ADR for this decision.",
+  "assertions": [
+    "docs/decisions/ has a new ADR file with a number higher than the existing ones",
+    "The ADR follows the template (Context, Decision, Consequences sections)",
+    "docs/changelog/ has an entry for this session",
+    "docs/architecture/Readme.md is updated to mention caching layer"
+  ]
+}
