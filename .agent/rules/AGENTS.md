@@ -2,6 +2,18 @@
 trigger: always_on
 ---
 
+## Context Directories
+
+When starting any task, read from ALL of these directories for full context:
+
+| Directory | What to read | Purpose |
+|---|---|---|
+| `.agent/rules/` | `AGENTS.md`, `HR-REQUIREMENT.md` | Project dev guide, Nepali domain rules |
+| `.opencode/` | `AGENTS.md` | OpenCode instructions, MCP PostgreSQL tools |
+| `.ai-memory/` | `project-memory.md`, `architecture-memory.md`, `design-memory.md`, `agents/*.json`, `decisions/` | Historical decisions, known risks, patterns, business context |
+
+---
+
 # HRMS AI Development Guide
 
 ## Project Context
@@ -37,6 +49,39 @@ Base Package:
 All backend classes must reside under `com.sagar.hr.*`.
 - Business feature packages (e.g., `com.sagar.hr.auth`, `com.sagar.hr.permission`, `com.sagar.hr.security`).
 - Global utilities, exceptions, handlers, and shared POJOs under `com.sagar.hr.util`.
+
+---
+
+# Nepali Market Context
+
+This project targets the Nepali market. All generated code must comply with:
+
+1. Labour Act, 2074 (2017)
+2. Contribution-based Social Security Act, 2074
+3. Nepali tax laws and IRD guidelines
+4. Bikram Sambat calendar support
+
+## Key Domain Considerations
+
+- **Dual calendar support** — B.S. and A.D. dates throughout the system
+- **SSF contributions** — 31% total (20% employer + 11% employee)
+- **Multi-slab income tax** — 1%, 10%, 20%, 30%, 36% brackets
+- **Festival bonus** — 1 month's salary, auto-triggered for Dashain
+- **Biometric integration** — patterns for device integration
+- **Nepali Unicode** — `NVARCHAR` columns for Nepali text fields
+- **Local bank export** — Nabil and Global IME format support
+
+## Compliance Rules
+
+- SSF must be exactly 31% (20% employer + 11% employee)
+- Festival bonus must be exactly 1 month's salary
+- Maternity leave: 98 days (60 fully paid)
+- Paternity leave: 15 days fully paid
+- Overtime: 1.5x for >8 hours/day or >48 hours/week
+- Home leave: 1 day per 20 working days
+- All monetary calculations must use `BigDecimal`
+- PAN numbers must be encrypted at rest
+- Audit trails mandatory for payroll changes
 
 ---
 
@@ -227,6 +272,28 @@ All entities should inherit:
 - updatedBy
 - active
 
+### Nepali Entity Patterns
+
+For entities that need Nepali text, include a dedicated field:
+
+```java
+@Column(columnDefinition = "NVARCHAR(255)")
+private String nameNepali;
+```
+
+For dual-calendar entities, store both A.D. and B.S. dates:
+
+- A.D. dates use `LocalDate`
+- B.S. dates use `String` with format `YYYY-MM-DD` (or a dedicated type when implemented)
+
+### Monetary Calculations
+
+All salary, tax, SSF, and monetary fields must use `BigDecimal`.
+
+### Banking Exports
+
+Support Nabil Bank and Global IME Bank export formats for salary disbursement.
+
 ---
 
 ## Exception Rules
@@ -388,6 +455,8 @@ V3__leave_table.sql
 Never modify existing migrations.
 
 Always create a new migration.
+
+Nepali-specific schema changes (B.S. date fields, `NVARCHAR` columns, compliance tables) must also go through Flyway migrations (e.g., `V4__add_employee_nepali_fields.sql`).
 
 ---
 
@@ -573,6 +642,49 @@ Expected Modules:
 - Organization
 - Notification
 - Audit
+
+## Module Details (Nepali Market)
+
+### employee_management
+
+Centralized employee data with:
+- Citizenship and PAN number storage (PAN encrypted at rest)
+- Document management for legal documents
+- Emergency contacts with Nepali phone formats
+- Dual-language names (English + Nepali)
+
+Entities: `Employee`, `Address`, `Document`, `EmergencyContact`, `EmploymentHistory`
+
+### payroll
+
+Nepali-specific payroll processing:
+- SSF integration (Social Security Fund)
+- Income tax slab calculation
+- Festival bonus automation (Dashain)
+- CIT, PF deductions
+- E-TDS reporting
+
+Entities: `Payroll`, `SalaryStructure`, `TaxSlab`, `SSFContribution`, `Deduction`, `Bonus`
+
+### leave_attendance
+
+Leave accrual per Labour Act 2074:
+- Maternity leave: 98 days (60 fully paid)
+- Paternity leave: 15 days fully paid
+- Home leave: 1 day per 20 worked days
+- Sick leave: 15 days (half-paid)
+- Bereavement leave: 13 days
+
+Entities: `Leave`, `LeaveType`, `LeaveBalance`, `Attendance`, `Holiday`
+
+### time_attendance
+
+- Biometric device integration
+- Overtime: 1.5x after 8 hours/day or 48 hours/week
+- Shift management
+- Night shift allowances
+
+Entities: `Shift`, `TimeLog`, `OvertimeRecord`, `BiometricLog`, `ShiftAllowance`
 
 New functionality must belong to an existing module or a clearly defined new module.
 
