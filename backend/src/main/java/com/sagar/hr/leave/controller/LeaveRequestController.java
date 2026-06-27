@@ -8,6 +8,7 @@ import com.sagar.hr.leave.service.LeaveRequestService;
 import com.sagar.hr.security.dto.response.MessageResponse;
 import com.sagar.hr.security.services.UserDetailsImpl;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -18,13 +19,10 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/leaves")
+@RequiredArgsConstructor
 public class LeaveRequestController {
 
     private final LeaveRequestService leaveRequestService;
-
-    public LeaveRequestController(LeaveRequestService leaveRequestService) {
-        this.leaveRequestService = leaveRequestService;
-    }
 
     @PostMapping("/apply")
     public ResponseEntity<?> applyLeave(Authentication authentication,

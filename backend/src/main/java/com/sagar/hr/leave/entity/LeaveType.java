@@ -4,5 +4,7 @@ public enum LeaveType {
     ANNUAL,
     SICK,
     MATERNITY,
-    PATERNITY
+    PATERNITY,
+    HOME,
+    BEREAVEMENT
 }

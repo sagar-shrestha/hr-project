@@ -1,10 +1,13 @@
 package com.sagar.hr.payroll.controller;
 
+import com.sagar.hr.payroll.dto.request.CreateSalaryStructureRequest;
+import com.sagar.hr.payroll.dto.request.UpdateSalaryStructureRequest;
+import com.sagar.hr.payroll.dto.response.SalaryStructureResponse;
 import com.sagar.hr.payroll.model.PayrollCalculationResult;
-import com.sagar.hr.payroll.model.SalaryStructure;
 import com.sagar.hr.payroll.service.PayrollService;
 import com.sagar.hr.payroll.service.SalaryStructureService;
 import com.sagar.hr.util.pojo.response.GlobalApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +41,8 @@ public class PayrollController {
     }
 
     @PostMapping("/structures")
-    public ResponseEntity<GlobalApiResponse> createStructure(@RequestBody SalaryStructure structure) {
-        SalaryStructure created = salaryStructureService.createOrUpdate(structure);
+    public ResponseEntity<GlobalApiResponse> createStructure(@Valid @RequestBody CreateSalaryStructureRequest request) {
+        SalaryStructureResponse created = salaryStructureService.create(request);
         return ResponseEntity.ok(GlobalApiResponse.builder()
                 .httpStatus(HttpStatus.CREATED.value())
                 .message("Salary structure created")
@@ -49,9 +52,8 @@ public class PayrollController {
     }
 
     @PutMapping("/structures/{id}")
-    public ResponseEntity<GlobalApiResponse> updateStructure(@PathVariable Long id, @RequestBody SalaryStructure structure) {
-        structure.setId(id);
-        SalaryStructure updated = salaryStructureService.createOrUpdate(structure);
+    public ResponseEntity<GlobalApiResponse> updateStructure(@PathVariable Long id, @Valid @RequestBody UpdateSalaryStructureRequest request) {
+        SalaryStructureResponse updated = salaryStructureService.update(id, request);
         return ResponseEntity.ok(GlobalApiResponse.builder()
                 .httpStatus(HttpStatus.OK.value())
                 .message("Salary structure updated")

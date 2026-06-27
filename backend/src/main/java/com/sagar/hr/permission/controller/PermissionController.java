@@ -1,7 +1,10 @@
 package com.sagar.hr.permission.controller;
 
-import com.sagar.hr.security.model.Permission;
+import com.sagar.hr.permission.dto.request.CreatePermissionRequest;
 import com.sagar.hr.permission.service.PermissionService;
+import com.sagar.hr.security.model.Permission;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +13,10 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/permissions")
+@RequiredArgsConstructor
 public class PermissionController {
 
     private final PermissionService permissionService;
-
-    public PermissionController(PermissionService permissionService) {
-        this.permissionService = permissionService;
-    }
 
     @GetMapping
     public List<Permission> getAllPermissions() {
@@ -24,11 +24,11 @@ public class PermissionController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createPermission(@RequestBody Permission permission) {
-        if (permissionService.findByName(permission.getName()).isPresent()) {
+    public ResponseEntity<?> createPermission(@Valid @RequestBody CreatePermissionRequest request) {
+        if (permissionService.findByName(request.getName()).isPresent()) {
             return ResponseEntity.badRequest().body("Error: Permission name is already taken!");
         }
-        Permission savedPermission = permissionService.save(permission);
+        Permission savedPermission = permissionService.create(request);
         return ResponseEntity.ok(savedPermission);
     }
 

@@ -15,7 +15,7 @@ import java.time.Duration;
 
 @Configuration
 @EnableCaching
-@ConditionalOnProperty(name = "app.payroll.cache.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "app.payroll.cache.enabled", havingValue = "true")
 public class RedisConfig {
 
     @Bean

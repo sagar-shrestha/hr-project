@@ -6,6 +6,7 @@ import com.sagar.hr.security.model.Role;
 import com.sagar.hr.security.model.User;
 import com.sagar.hr.security.repository.UserRepository;
 import com.sagar.hr.security.repository.RoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,17 +17,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
-
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.encoder = encoder;
-    }
 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()

@@ -14,6 +14,7 @@ import com.sagar.hr.leave.repository.LeaveRequestRepository;
 import com.sagar.hr.security.model.User;
 import com.sagar.hr.security.repository.UserRepository;
 import com.sagar.hr.util.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,28 +26,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class LeaveRequestService {
 
     private static final Map<LeaveType, BigDecimal> ACCRUAL_RULES = new LinkedHashMap<>();
 
     static {
         ACCRUAL_RULES.put(LeaveType.ANNUAL, BigDecimal.valueOf(18));
-        ACCRUAL_RULES.put(LeaveType.SICK, BigDecimal.valueOf(12));
+        ACCRUAL_RULES.put(LeaveType.SICK, BigDecimal.valueOf(15));
         ACCRUAL_RULES.put(LeaveType.MATERNITY, BigDecimal.valueOf(98));
         ACCRUAL_RULES.put(LeaveType.PATERNITY, BigDecimal.valueOf(15));
+        ACCRUAL_RULES.put(LeaveType.HOME, BigDecimal.valueOf(18));
+        ACCRUAL_RULES.put(LeaveType.BEREAVEMENT, BigDecimal.valueOf(13));
     }
 
     private final LeaveRequestRepository leaveRequestRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final UserRepository userRepository;
-
-    public LeaveRequestService(LeaveRequestRepository leaveRequestRepository,
-                               LeaveBalanceRepository leaveBalanceRepository,
-                               UserRepository userRepository) {
-        this.leaveRequestRepository = leaveRequestRepository;
-        this.leaveBalanceRepository = leaveBalanceRepository;
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public LeaveResponse applyLeave(Long userId, ApplyLeaveRequest request) {

@@ -14,8 +14,8 @@ import lombok.Setter;
 public class AttendanceSummaryResponse {
 
     private String department;
-    private long present;
-    private long absent;
-    private long late;
-    private long leave;
+    private Integer present;
+    private Integer absent;
+    private Integer late;
+    private Integer leave;
 }

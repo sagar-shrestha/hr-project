@@ -2,27 +2,24 @@ package com.sagar.hr.department.service;
 
 import com.sagar.hr.department.model.Department;
 import com.sagar.hr.department.repository.DepartmentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
-
-    public DepartmentService(DepartmentRepository departmentRepository) {
-        this.departmentRepository = departmentRepository;
-    }
 
     public List<Department> findAll() {
         return departmentRepository.findAll();
     }
 
-    public Optional<Department> findById(UUID id) {
+    public Optional<Department> findById(Long id) {
         return departmentRepository.findById(id);
     }
 
@@ -40,11 +37,11 @@ public class DepartmentService {
     }
 
     @Transactional
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         departmentRepository.deleteById(id);
     }
 
-    public boolean existsById(UUID id) {
+    public boolean existsById(Long id) {
         return departmentRepository.existsById(id);
     }
 }

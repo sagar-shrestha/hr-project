@@ -18,5 +18,10 @@ public class PayrollCalculationResult {
     private BigDecimal netPay;
     private BigDecimal totalDeductions;
     private BigDecimal totalTaxes;
+    private BigDecimal ssfEmployee;
+    private BigDecimal ssfEmployer;
+    private BigDecimal basicSalary;
+    private BigDecimal allowances;
+    private BigDecimal festivalBonus;
     private LocalDateTime calculatedAt;
 }
