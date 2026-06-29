@@ -10,7 +10,7 @@ import com.sagar.hr.security.model.Role;
 import com.sagar.hr.security.model.User;
 import com.sagar.hr.security.repository.UserRepository;
 import com.sagar.hr.security.services.UserDetailsImpl;
-import com.sagar.hr.util.exception.NotAbleTOAssignException;
+import com.sagar.hr.util.exception.NotAbleToAssignException;
 import com.sagar.hr.util.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -77,7 +77,7 @@ public class AuthService {
             roles.add(userRole);
         } else {
             if (strRoles.contains("ROLE_SUPER_ADMIN")) {
-                throw new NotAbleTOAssignException("Error: Cannot assign SUPER_ADMIN role!");
+                throw new NotAbleToAssignException("Error: Cannot assign SUPER_ADMIN role!");
             }
             strRoles.forEach(role -> {
                 Role foundedRole = roleRepository.findByName(role)

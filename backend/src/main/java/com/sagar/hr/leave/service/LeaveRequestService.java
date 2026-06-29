@@ -9,6 +9,7 @@ import com.sagar.hr.leave.entity.LeaveRequest;
 import com.sagar.hr.leave.entity.LeaveStatus;
 import com.sagar.hr.leave.entity.LeaveType;
 import com.sagar.hr.leave.exception.InsufficientLeaveBalanceException;
+import com.sagar.hr.leave.mapper.LeaveMapper;
 import com.sagar.hr.leave.repository.LeaveBalanceRepository;
 import com.sagar.hr.leave.repository.LeaveRequestRepository;
 import com.sagar.hr.security.model.User;
@@ -43,6 +44,7 @@ public class LeaveRequestService {
     private final LeaveRequestRepository leaveRequestRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final UserRepository userRepository;
+    private final LeaveMapper leaveMapper;
 
     @Transactional
     public LeaveResponse applyLeave(Long userId, ApplyLeaveRequest request) {
@@ -82,7 +84,7 @@ public class LeaveRequestService {
         leaveRequest.setTotalDays((int) totalDays);
 
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
-        return toResponse(saved);
+        return leaveMapper.toResponse(saved);
     }
 
     @Transactional
@@ -114,7 +116,7 @@ public class LeaveRequestService {
             leaveBalanceRepository.save(balance);
         }
 
-        return toResponse(saved);
+        return leaveMapper.toResponse(saved);
     }
 
     @Transactional
@@ -135,7 +137,7 @@ public class LeaveRequestService {
         leaveRequest.setRemarks(request.getRemarks());
 
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
-        return toResponse(saved);
+        return leaveMapper.toResponse(saved);
     }
 
     public List<LeaveBalanceResponse> viewBalance(Long userId) {
@@ -200,34 +202,13 @@ public class LeaveRequestService {
 
     public List<LeaveResponse> getUserLeaves(Long userId) {
         return leaveRequestRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
-                .map(this::toResponse)
+                .map(leaveMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     public List<LeaveResponse> getPendingLeaves() {
         return leaveRequestRepository.findByStatusOrderByCreatedAtAsc(LeaveStatus.PENDING).stream()
-                .map(this::toResponse)
+                .map(leaveMapper::toResponse)
                 .collect(Collectors.toList());
-    }
-
-    private LeaveResponse toResponse(LeaveRequest leaveRequest) {
-        return LeaveResponse.builder()
-                .id(leaveRequest.getId())
-                .userId(leaveRequest.getUser().getId())
-                .username(leaveRequest.getUser().getUsername())
-                .leaveType(leaveRequest.getLeaveType())
-                .status(leaveRequest.getStatus())
-                .startDate(leaveRequest.getStartDate())
-                .endDate(leaveRequest.getEndDate())
-                .reason(leaveRequest.getReason())
-                .totalDays(leaveRequest.getTotalDays())
-                .approvedById(leaveRequest.getApprovedBy() != null ? leaveRequest.getApprovedBy().getId() : null)
-                .approvedByName(leaveRequest.getApprovedBy() != null ? leaveRequest.getApprovedBy().getUsername() : null)
-                .approvedAt(leaveRequest.getApprovedAt())
-                .rejectedReason(leaveRequest.getRejectedReason())
-                .remarks(leaveRequest.getRemarks())
-                .createdAt(leaveRequest.getCreatedAt())
-                .updatedAt(leaveRequest.getUpdatedAt())
-                .build();
     }
 }

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS employees (
     phone VARCHAR(20),
     citizenship_number VARCHAR(50) UNIQUE,
     pan_number VARCHAR(20) UNIQUE,
-    department_id UUID,
+    department_id BIGINT,
     designation VARCHAR(100),
     employee_code VARCHAR(50) UNIQUE,
     date_of_birth DATE,

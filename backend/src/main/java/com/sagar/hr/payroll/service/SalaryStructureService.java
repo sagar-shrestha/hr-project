@@ -3,6 +3,7 @@ package com.sagar.hr.payroll.service;
 import com.sagar.hr.payroll.dto.request.CreateSalaryStructureRequest;
 import com.sagar.hr.payroll.dto.request.UpdateSalaryStructureRequest;
 import com.sagar.hr.payroll.dto.response.SalaryStructureResponse;
+import com.sagar.hr.payroll.mapper.SalaryStructureMapper;
 import com.sagar.hr.payroll.model.SalaryStructure;
 import com.sagar.hr.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class SalaryStructureService {
 
     private final SalaryStructureRepository repository;
     private final PayrollCalculator payrollCalculator;
+    private final SalaryStructureMapper salaryStructureMapper;
 
     @Transactional
     public SalaryStructureResponse create(CreateSalaryStructureRequest request) {
@@ -30,7 +32,7 @@ public class SalaryStructureService {
         structure.setActive(true);
         structure.setEffectiveFrom(request.getEffectiveFrom() != null ? request.getEffectiveFrom() : LocalDateTime.now());
         SalaryStructure saved = repository.save(structure);
-        return toResponse(saved);
+        return salaryStructureMapper.toResponse(saved);
     }
 
     @Transactional
@@ -50,7 +52,7 @@ public class SalaryStructureService {
 
         SalaryStructure saved = repository.save(structure);
         payrollCalculator.invalidateCache(saved.getEmployeeId());
-        return toResponse(saved);
+        return salaryStructureMapper.toResponse(saved);
     }
 
     @Transactional
@@ -60,22 +62,5 @@ public class SalaryStructureService {
         structure.setEffectiveTo(LocalDateTime.now());
         repository.save(structure);
         payrollCalculator.invalidateCache(structure.getEmployeeId());
-    }
-
-    private SalaryStructureResponse toResponse(SalaryStructure s) {
-        return SalaryStructureResponse.builder()
-                .id(s.getId())
-                .name(s.getName())
-                .basicSalary(s.getBasicSalary())
-                .allowances(s.getAllowances())
-                .deductions(s.getDeductions())
-                .taxRate(s.getTaxRate())
-                .active(s.isActive())
-                .employeeId(s.getEmployeeId())
-                .effectiveFrom(s.getEffectiveFrom())
-                .effectiveTo(s.getEffectiveTo())
-                .createdAt(s.getCreatedAt())
-                .updatedAt(s.getUpdatedAt())
-                .build();
     }
 }

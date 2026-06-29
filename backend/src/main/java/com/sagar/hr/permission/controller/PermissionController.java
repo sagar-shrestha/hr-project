@@ -1,10 +1,11 @@
 package com.sagar.hr.permission.controller;
 
 import com.sagar.hr.permission.dto.request.CreatePermissionRequest;
+import com.sagar.hr.permission.dto.response.PermissionResponse;
 import com.sagar.hr.permission.service.PermissionService;
-import com.sagar.hr.security.model.Permission;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,25 +20,19 @@ public class PermissionController {
     private final PermissionService permissionService;
 
     @GetMapping
-    public List<Permission> getAllPermissions() {
-        return permissionService.findAll();
+    public ResponseEntity<List<PermissionResponse>> getAllPermissions() {
+        return ResponseEntity.ok(permissionService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<?> createPermission(@Valid @RequestBody CreatePermissionRequest request) {
-        if (permissionService.findByName(request.getName()).isPresent()) {
-            return ResponseEntity.badRequest().body("Error: Permission name is already taken!");
-        }
-        Permission savedPermission = permissionService.create(request);
-        return ResponseEntity.ok(savedPermission);
+    public ResponseEntity<PermissionResponse> createPermission(@Valid @RequestBody CreatePermissionRequest request) {
+        PermissionResponse response = permissionService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePermission(@PathVariable Long id) {
-        if (!permissionService.existsById(id)) {
-            return ResponseEntity.badRequest().body("Error: Permission not found!");
-        }
+    public ResponseEntity<Void> deletePermission(@PathVariable Long id) {
         permissionService.deleteById(id);
-        return ResponseEntity.ok("Permission deleted successfully!");
+        return ResponseEntity.noContent().build();
     }
 }
