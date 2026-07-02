@@ -23,6 +23,9 @@
   "Payroll Processing": {},
   "Attendance Processing": {},
   "Leave Management": {},
+  "Nepali Domain": {
+    "skill_path": ".opencode/skills/nepali-domain/SKILL.md"
+  },
   "Recruitment Workflow": {},
   "Employee Lifecycle Management": {}
 }

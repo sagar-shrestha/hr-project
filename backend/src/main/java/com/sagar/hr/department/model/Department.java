@@ -23,6 +23,9 @@ public class Department {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
+    @Column(columnDefinition = "NVARCHAR(100)")
+    private String nameNepali;
+
     @Column(nullable = false, unique = true, length = 20)
     private String code;
 

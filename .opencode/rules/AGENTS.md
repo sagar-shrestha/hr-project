@@ -9,8 +9,21 @@ When starting any task, read from ALL of these directories for full context:
 | Directory | What to read | Purpose |
 |---|---|---|
 | `.opencode/rules/` | `AGENTS.md`, `hr-project-rrules.md` | Project dev rules, coding standards, architecture |
-| `.opencode/skills/` | `HR-REQUIREMENT.md`, `project-memory.md`, `architecture-memory.md`, `design-memory.md`, `agents/*.json`, `decisions/` | Nepali domain knowledge, project memory, historical decisions |
+| `.opencode/skills/` | `nepali-domain/SKILL.md`, `HR-REQUIREMENT.md`, `project-memory.md`, `architecture-memory.md`, `design-memory.md`, `agents/*.json`, `decisions/` | Nepali domain knowledge, project memory, historical decisions |
 | `.opencode/` | `AGENTS.md` | OpenCode instructions, MCP PostgreSQL tools |
+
+---
+
+## Agent Memory Auto-Load
+
+Load domain-specific agent memories for context before writing code:
+
+| When working on... | Read this file |
+|---|---|
+| Backend code (Java, Spring Boot, JPA, Flyway) | `.opencode/skills/agents/backend-engineer-memory.json` — recent tasks, known patterns, circular dependency risks, API conventions |
+| Frontend code (Angular, TypeScript, Tailwind, RxJS) | `.opencode/skills/agents/frontend-engineer-memory.json` — component patterns, build risks, UI conventions |
+
+These files store recent task history, known risks, and open issues for each domain. Reading them prevents regression and preserves context across sessions.
 
 ---
 

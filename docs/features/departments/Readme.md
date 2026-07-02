@@ -30,6 +30,7 @@ Manages organizational departments and links employees to their respective depar
 ## Domain Rules
 
 - Department `name` and `code` must be unique
+- Dept name stored bilingually: `name` (English) + `nameNepali` (NVARCHAR)
 - Deleting a department should consider existing employee references
 
 ## Where It Lives
