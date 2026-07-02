@@ -1,7 +1,11 @@
 package com.sagar.hr.permission.controller;
 
-import com.sagar.hr.security.model.Permission;
+import com.sagar.hr.permission.dto.request.CreatePermissionRequest;
+import com.sagar.hr.permission.dto.response.PermissionResponse;
 import com.sagar.hr.permission.service.PermissionService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,34 +14,25 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/permissions")
+@RequiredArgsConstructor
 public class PermissionController {
 
     private final PermissionService permissionService;
 
-    public PermissionController(PermissionService permissionService) {
-        this.permissionService = permissionService;
-    }
-
     @GetMapping
-    public List<Permission> getAllPermissions() {
-        return permissionService.findAll();
+    public ResponseEntity<List<PermissionResponse>> getAllPermissions() {
+        return ResponseEntity.ok(permissionService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<?> createPermission(@RequestBody Permission permission) {
-        if (permissionService.findByName(permission.getName()).isPresent()) {
-            return ResponseEntity.badRequest().body("Error: Permission name is already taken!");
-        }
-        Permission savedPermission = permissionService.save(permission);
-        return ResponseEntity.ok(savedPermission);
+    public ResponseEntity<PermissionResponse> createPermission(@Valid @RequestBody CreatePermissionRequest request) {
+        PermissionResponse response = permissionService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePermission(@PathVariable Long id) {
-        if (!permissionService.existsById(id)) {
-            return ResponseEntity.badRequest().body("Error: Permission not found!");
-        }
+    public ResponseEntity<Void> deletePermission(@PathVariable Long id) {
         permissionService.deleteById(id);
-        return ResponseEntity.ok("Permission deleted successfully!");
+        return ResponseEntity.noContent().build();
     }
 }

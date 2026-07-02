@@ -1,0 +1,28 @@
+{
+  "expectations": [
+    {
+      "text": "API doc created with attendance-summary endpoint",
+      "passed": true,
+      "evidence": "found in summary"
+    },
+    {
+      "text": "Changelog created for attendance session",
+      "passed": true,
+      "evidence": "found in summary"
+    },
+    {
+      "text": "Baseline: docs/features/reporting was created as a new module",
+      "passed": true,
+      "evidence": "found in summary"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "user_notes_summary": {},
+  "eval_feedback": {}
+}

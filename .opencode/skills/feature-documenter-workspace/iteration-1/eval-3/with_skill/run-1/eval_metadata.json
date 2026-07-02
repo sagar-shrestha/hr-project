@@ -1,0 +1,11 @@
+{
+  "eval_id": 3,
+  "eval_name": "departments-table-migration",
+  "prompt": "We need to add a departments table and link employees to departments. Create Flyway migration V6__Create_Departments_Table.sql with columns: id (UUID), name (VARCHAR 100), code (VARCHAR 20), created_at, updated_at. Then add department_id (UUID, FK to departments) to the employees table. Also create a Department entity, DepartmentRepository, and DepartmentService with basic CRUD.",
+  "assertions": [
+    "docs/database/Readme.md has departments table documented and V6 migration listed",
+    "docs/database/Readme.md shows department_id column in employees table",
+    "docs/changelog/ has an entry for this session",
+    "docs/features/departments/Readme.md exists describing the department CRUD feature"
+  ]
+}

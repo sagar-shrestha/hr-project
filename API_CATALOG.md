@@ -16,5 +16,15 @@
   - GET `/api/v1/permissions`
   - POST `/api/v1/permissions`
   - DELETE `/api/v1/permissions/{id}`
+- `Leave API`: Handles leave management (apply, approve, reject, balance).
+  - POST `/api/v1/leaves/apply` — Apply for leave
+  - PUT `/api/v1/leaves/{id}/approve` — Approve a leave request (Admin/Moderator)
+  - PUT `/api/v1/leaves/{id}/reject` — Reject a leave request (Admin/Moderator)
+  - GET `/api/v1/leaves/balance` — View current user's leave balance
+  - GET `/api/v1/leaves/my` — View current user's leave requests
+  - GET `/api/v1/leaves/pending` — View all pending leaves (Admin/Moderator)
+  - POST `/api/v1/leaves/initialize-balance` — Initialize leave balances (Admin)
+  
+*Leave types: ANNUAL (18 days), SICK (12 days), MATERNITY (60 days), PATERNITY (15 days — Nepali market standard).*
 
 *Detailed request/response contracts will be synced here from Swagger docs.*

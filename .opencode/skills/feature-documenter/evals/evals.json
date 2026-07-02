@@ -1,0 +1,54 @@
+{
+  "skill_name": "feature-documenter",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a new leave management module. Create the backend structure for it — entity, repository, service, controller under com.sagar.hr.leave. Leave has types (annual, sick, maternity, paternity), each with different accrual rules. Include REST endpoints for apply, approve, reject, and view balance. Use Flyway V5 for the leave_requests table. This is a real HRMS project for the Nepali market.",
+      "expected_output": "Leave management module is implemented with proper docs created under docs/features/leave-management/Readme.md, docs/api/Readme.md updated, docs/database/Readme.md updated, and a changelog entry created.",
+      "files": [],
+      "expectations": [
+        "docs/features/leave-management/Readme.md exists and describes the leave module's responsibilities, key components, API surface, and domain rules",
+        "docs/api/Readme.md has entries for leave endpoints (apply, approve, reject, balance)",
+        "docs/database/Readme.md has leave_requests table documented and V5 migration listed",
+        "docs/changelog/ has an entry for this session",
+        "The feature doc is generalized (no full code dumps, no line-by-line explanations)",
+        "Backend source files for leave module exist under com.sagar.hr.leave"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Add a new REST endpoint GET /api/v1/reports/attendance-summary that returns daily attendance counts (present, absent, late, leave) grouped by department for a given date range. The response should be JSON with department name and counts. Put the controller in com.sagar.hr.reporting.",
+      "expected_output": "Attendance summary endpoint is implemented with updated docs.",
+      "files": [],
+      "expectations": [
+        "docs/api/Readme.md has the attendance-summary endpoint listed",
+        "docs/changelog/ has an entry for this session",
+        "The API doc entry includes method, path, and description",
+        "No feature doc was created (this is an addition to existing functionality, not a new feature)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We need to add a departments table and link employees to departments. Create Flyway migration V6__Create_Departments_Table.sql with columns: id (UUID), name (VARCHAR 100), code (VARCHAR 20), created_at, updated_at. Then add department_id (UUID, FK to departments) to the employees table. Also create a Department entity, DepartmentRepository, and DepartmentService with basic CRUD.",
+      "expected_output": "Department module and migration are created with proper docs updates.",
+      "files": [],
+      "expectations": [
+        "docs/database/Readme.md has departments table documented and V6 migration listed",
+        "docs/database/Readme.md shows department_id column in employees table",
+        "docs/changelog/ has an entry for this session",
+        "docs/features/departments/Readme.md exists describing the department CRUD feature"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I want to introduce Redis caching for payroll calculations because they're slow. Put it behind an interface so we can swap implementations later. The cache should invalidate when salary structures change. Create an ADR for this decision.",
+      "expected_output": "Redis caching is implemented behind an interface, and an ADR is created.",
+      "expectations": [
+        "docs/decisions/ has a new ADR file with a number higher than the existing ones",
+        "The ADR follows the template (Context, Decision, Consequences sections)",
+        "docs/changelog/ has an entry for this session",
+        "docs/architecture/Readme.md is updated to mention caching layer"
+      ]
+    }
+  ]
+}

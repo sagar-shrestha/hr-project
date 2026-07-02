@@ -2,10 +2,15 @@ package com.sagar.hr.security.services;
 
 import com.sagar.hr.security.dto.request.SignupRequest;
 import com.sagar.hr.security.dto.response.UserResponse;
+import com.sagar.hr.security.mapper.UserMapper;
 import com.sagar.hr.security.model.Role;
 import com.sagar.hr.security.model.User;
 import com.sagar.hr.security.repository.UserRepository;
 import com.sagar.hr.security.repository.RoleRepository;
+import com.sagar.hr.util.exception.AlreadyInUseException;
+import com.sagar.hr.util.exception.NotAbleToAssignException;
+import com.sagar.hr.util.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,37 +18,31 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
-
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.encoder = encoder;
-    }
+    private final UserMapper userMapper;
 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
+                .map(userMapper::toResponse)
+                .toList();
     }
 
     public UserResponse createUser(SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            throw new RuntimeException("Error: Username is already taken!");
+            throw new AlreadyInUseException("Username is already taken: " + signUpRequest.getUsername());
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            throw new RuntimeException("Error: Email is already in use!");
+            throw new AlreadyInUseException("Email is already in use: " + signUpRequest.getEmail());
         }
 
-        // Create new user's account
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
@@ -53,15 +52,15 @@ public class UserService {
 
         if (strRoles == null || strRoles.isEmpty()) {
             Role userRole = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new NotFoundException("Role ROLE_USER not found."));
             roles.add(userRole);
         } else {
             if (strRoles.contains("ROLE_SUPER_ADMIN")) {
-                throw new RuntimeException("Error: Cannot create or assign SUPER_ADMIN role!");
+                throw new NotAbleToAssignException("Cannot create or assign SUPER_ADMIN role!");
             }
             strRoles.forEach(role -> {
                 Role foundRole = roleRepository.findByName(role)
-                        .orElseThrow(() -> new RuntimeException("Error: Role " + role + " is not found."));
+                        .orElseThrow(() -> new NotFoundException("Role " + role + " not found."));
                 roles.add(foundRole);
             });
         }
@@ -71,26 +70,26 @@ public class UserService {
         user.setRoles(roles);
         User savedUser = userRepository.save(user);
 
-        return convertToResponse(savedUser);
+        return userMapper.toResponse(savedUser);
     }
 
     public UserResponse updateUserRoles(Long userId, Set<String> strRoles) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Error: User not found!"));
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
 
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null || strRoles.isEmpty()) {
             Role userRole = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new NotFoundException("Role ROLE_USER not found."));
             roles.add(userRole);
         } else {
             if (strRoles.contains("ROLE_SUPER_ADMIN")) {
-                throw new RuntimeException("Error: Cannot create or assign SUPER_ADMIN role!");
+                throw new NotAbleToAssignException("Cannot create or assign SUPER_ADMIN role!");
             }
             strRoles.forEach(role -> {
                 Role foundRole = roleRepository.findByName(role)
-                        .orElseThrow(() -> new RuntimeException("Error: Role " + role + " is not found."));
+                        .orElseThrow(() -> new NotFoundException("Role " + role + " not found."));
                 roles.add(foundRole);
             });
         }
@@ -101,20 +100,19 @@ public class UserService {
         user.setRoles(roles);
         User updatedUser = userRepository.save(user);
 
-        return convertToResponse(updatedUser);
+        return userMapper.toResponse(updatedUser);
     }
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Error: User not found!"));
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
         validateCanManageTargetUser(user);
         userRepository.delete(user);
     }
 
     private void validateCanManageTargetUser(User targetUser) {
-        Set<Role> targetRoles = targetUser.getRoles();
-        validateCanManageTargetRoles(targetRoles);
+        validateCanManageTargetRoles(targetUser.getRoles());
     }
 
     private void validateCanManageTargetRoles(Set<Role> targetRoles) {
@@ -126,34 +124,27 @@ public class UserService {
         for (Role role : targetRoles) {
             String roleName = role.getName();
             if (isModerator) {
-                // Moderator can ONLY manage ROLE_USER
                 if (!roleName.equals("ROLE_USER")) {
-                    throw new RuntimeException("Error: Moderator can only manage Users!");
+                    throw new NotAbleToAssignException("Moderator can only manage Users!");
                 }
             } else if (isAdmin) {
-                // Admin can manage ROLE_MODERATOR and ROLE_USER
                 if (roleName.equals("ROLE_ADMIN") || roleName.equals("ROLE_SUPER_ADMIN")) {
-                    throw new RuntimeException("Error: Admin cannot manage Admins or Super Admins!");
+                    throw new NotAbleToAssignException("Admin cannot manage Admins or Super Admins!");
                 }
             }
-            // Super Admin can manage anyone
         }
     }
 
     private String getCurrentUserHighestRole() {
-        // Get the UserDetailsImpl from the authentication principal
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!(principal instanceof UserDetailsImpl)) {
-            throw new RuntimeException("Error: Invalid authentication principal!");
+            throw new NotFoundException("Invalid authentication principal!");
         }
 
         UserDetailsImpl userDetails = (UserDetailsImpl) principal;
-
-        // Get actual assigned roles (not inherited from hierarchy)
         Set<String> actualRoles = userDetails.getRoles();
 
-        // Return the highest role based on priority
         if (actualRoles.contains("ROLE_SUPER_ADMIN"))
             return "ROLE_SUPER_ADMIN";
         if (actualRoles.contains("ROLE_ADMIN"))
@@ -161,12 +152,5 @@ public class UserService {
         if (actualRoles.contains("ROLE_MODERATOR"))
             return "ROLE_MODERATOR";
         return "ROLE_USER";
-    }
-
-    private UserResponse convertToResponse(User user) {
-        Set<String> roles = user.getRoles().stream()
-                .map(Role::getName)
-                .collect(Collectors.toSet());
-        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), roles);
     }
 }

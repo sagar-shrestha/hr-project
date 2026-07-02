@@ -1,11 +1,11 @@
 package com.sagar.hr.security.controller;
 
 import com.sagar.hr.security.dto.request.SignupRequest;
-import com.sagar.hr.security.dto.response.MessageResponse;
 import com.sagar.hr.security.dto.response.UserResponse;
 import com.sagar.hr.security.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,34 +29,21 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<?> createUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        try {
-            UserResponse user = userService.createUser(signUpRequest);
-            return ResponseEntity.ok(user);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-        }
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        UserResponse user = userService.createUser(signUpRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @PutMapping("/{id}/roles")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<?> updateRoles(@PathVariable Long id, @RequestBody Set<String> roles) {
-        try {
-            UserResponse user = userService.updateUserRoles(id, roles);
-            return ResponseEntity.ok(user);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-        }
+    public ResponseEntity<UserResponse> updateRoles(@PathVariable Long id, @RequestBody Set<String> roles) {
+        return ResponseEntity.ok(userService.updateUserRoles(id, roles));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
-        }
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }
