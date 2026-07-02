@@ -7,4 +7,5 @@ import lombok.NoArgsConstructor;
 public class CommonMessages {
 
     public static final String SOMETHING_WENT_WRONG = "SOMETHING_WENT_WRONG";
+    public static final String USER_NOT_FOUND_WITH_ID = "User not found with id: ";
 }

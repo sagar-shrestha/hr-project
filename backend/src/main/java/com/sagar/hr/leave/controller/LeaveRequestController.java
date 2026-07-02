@@ -6,9 +6,10 @@ import com.sagar.hr.leave.dto.response.LeaveBalanceResponse;
 import com.sagar.hr.leave.dto.response.LeaveResponse;
 import com.sagar.hr.leave.service.LeaveRequestService;
 import com.sagar.hr.security.services.UserDetailsImpl;
+import com.sagar.hr.util.pojo.response.GlobalApiResponse;
+import com.sagar.hr.util.util.ControllerUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -25,54 +26,60 @@ public class LeaveRequestController {
     private final LeaveRequestService leaveRequestService;
 
     @PostMapping("/apply")
-    public ResponseEntity<LeaveResponse> applyLeave(Authentication authentication,
-                                                    @Valid @RequestBody ApplyLeaveRequest request) {
+    public ResponseEntity<GlobalApiResponse> applyLeave(Authentication authentication,
+                                                        @Valid @RequestBody ApplyLeaveRequest request) {
         Long userId = getCurrentUserId(authentication);
-        return ResponseEntity.status(HttpStatus.CREATED).body(leaveRequestService.applyLeave(userId, request));
+        LeaveResponse leave = leaveRequestService.applyLeave(userId, request);
+        return ControllerUtil.created("Leave applied", leave);
     }
 
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<LeaveResponse> approveLeave(Authentication authentication,
-                                                      @PathVariable Long id,
-                                                      @RequestBody ApproveRejectRequest request) {
+    public ResponseEntity<GlobalApiResponse> approveLeave(Authentication authentication,
+                                                          @PathVariable Long id,
+                                                          @RequestBody ApproveRejectRequest request) {
         Long approverId = getCurrentUserId(authentication);
-        return ResponseEntity.ok(leaveRequestService.approveLeave(id, approverId, request));
+        LeaveResponse leave = leaveRequestService.approveLeave(id, approverId, request);
+        return ControllerUtil.ok("Leave approved", leave);
     }
 
     @PostMapping("/{id}/reject")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<LeaveResponse> rejectLeave(Authentication authentication,
-                                                     @PathVariable Long id,
-                                                     @RequestBody ApproveRejectRequest request) {
+    public ResponseEntity<GlobalApiResponse> rejectLeave(Authentication authentication,
+                                                         @PathVariable Long id,
+                                                         @RequestBody ApproveRejectRequest request) {
         Long approverId = getCurrentUserId(authentication);
-        return ResponseEntity.ok(leaveRequestService.rejectLeave(id, approverId, request));
+        LeaveResponse leave = leaveRequestService.rejectLeave(id, approverId, request);
+        return ControllerUtil.ok("Leave rejected", leave);
     }
 
     @GetMapping("/balance")
-    public ResponseEntity<List<LeaveBalanceResponse>> viewBalance(Authentication authentication) {
+    public ResponseEntity<GlobalApiResponse> viewBalance(Authentication authentication) {
         Long userId = getCurrentUserId(authentication);
-        return ResponseEntity.ok(leaveRequestService.viewBalance(userId));
+        List<LeaveBalanceResponse> balance = leaveRequestService.viewBalance(userId);
+        return ControllerUtil.ok("Leave balance retrieved", balance);
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<LeaveResponse>> getMyLeaves(Authentication authentication) {
+    public ResponseEntity<GlobalApiResponse> getMyLeaves(Authentication authentication) {
         Long userId = getCurrentUserId(authentication);
-        return ResponseEntity.ok(leaveRequestService.getUserLeaves(userId));
+        List<LeaveResponse> leaves = leaveRequestService.getUserLeaves(userId);
+        return ControllerUtil.ok("My leaves retrieved", leaves);
     }
 
     @GetMapping("/pending")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'MODERATOR')")
-    public ResponseEntity<List<LeaveResponse>> getPendingLeaves() {
-        return ResponseEntity.ok(leaveRequestService.getPendingLeaves());
+    public ResponseEntity<GlobalApiResponse> getPendingLeaves() {
+        List<LeaveResponse> leaves = leaveRequestService.getPendingLeaves();
+        return ControllerUtil.ok("Pending leaves retrieved", leaves);
     }
 
     @PostMapping("/initialize-balance")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
-    public ResponseEntity<Void> initializeBalance(Authentication authentication) {
+    public ResponseEntity<GlobalApiResponse> initializeBalance(Authentication authentication) {
         Long userId = getCurrentUserId(authentication);
         leaveRequestService.initializeLeaveBalance(userId);
-        return ResponseEntity.ok().build();
+        return ControllerUtil.ok("Leave balance initialized", null);
     }
 
     private Long getCurrentUserId(Authentication authentication) {

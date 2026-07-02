@@ -4,12 +4,12 @@ import com.sagar.hr.security.repository.RoleRepository;
 import com.sagar.hr.security.dto.request.LoginRequest;
 import com.sagar.hr.security.dto.request.SignupRequest;
 import com.sagar.hr.security.dto.response.JwtResponse;
-import com.sagar.hr.security.dto.response.MessageResponse;
 import com.sagar.hr.security.jwt.JwtUtils;
 import com.sagar.hr.security.model.Role;
 import com.sagar.hr.security.model.User;
 import com.sagar.hr.security.repository.UserRepository;
 import com.sagar.hr.security.services.UserDetailsImpl;
+import com.sagar.hr.util.exception.AlreadyInUseException;
 import com.sagar.hr.util.exception.NotAbleToAssignException;
 import com.sagar.hr.util.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -54,16 +54,15 @@ public class AuthService {
                 roles);
     }
 
-    public MessageResponse registerUser(SignupRequest signUpRequest) {
+    public void registerUser(SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new MessageResponse("Error: Username is already taken!");
+            throw new AlreadyInUseException("Username is already taken: " + signUpRequest.getUsername());
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new MessageResponse("Error: Email is already in use!");
+            throw new AlreadyInUseException("Email is already in use: " + signUpRequest.getEmail());
         }
 
-        // Create new user's account
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
@@ -73,22 +72,20 @@ public class AuthService {
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new NotFoundException("Role ROLE_USER not found."));
             roles.add(userRole);
         } else {
             if (strRoles.contains("ROLE_SUPER_ADMIN")) {
-                throw new NotAbleToAssignException("Error: Cannot assign SUPER_ADMIN role!");
+                throw new NotAbleToAssignException("Cannot assign SUPER_ADMIN role!");
             }
             strRoles.forEach(role -> {
                 Role foundedRole = roleRepository.findByName(role)
-                        .orElseThrow(() -> new NotFoundException("Error: Role " + role + " is not found."));
+                        .orElseThrow(() -> new NotFoundException("Role " + role + " not found."));
                 roles.add(foundedRole);
             });
         }
 
         user.setRoles(roles);
         userRepository.save(user);
-
-        return new MessageResponse("User registered successfully!");
     }
 }

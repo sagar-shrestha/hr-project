@@ -2,10 +2,7 @@ package com.sagar.hr.leave.entity;
 
 import com.sagar.hr.security.model.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +11,8 @@ import java.time.LocalDateTime;
 @Table(name = "leave_requests")
 @Getter
 @Setter
+@Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class LeaveRequest {

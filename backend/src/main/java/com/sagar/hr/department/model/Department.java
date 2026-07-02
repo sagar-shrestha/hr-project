@@ -2,9 +2,11 @@ package com.sagar.hr.department.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
 @Table(name = "departments")
 @Getter
 @Setter
+@Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Department {
@@ -22,6 +26,9 @@ public class Department {
 
     @Column(nullable = false, unique = true, length = 100)
     private String name;
+
+    @Column(columnDefinition = "NVARCHAR(100)")
+    private String nameNepali;
 
     @Column(nullable = false, unique = true, length = 20)
     private String code;

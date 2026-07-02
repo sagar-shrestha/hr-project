@@ -46,27 +46,27 @@ public class EmployeeMapper {
     }
 
     public EmployeeResponse toResponse(Employee entity) {
-        EmployeeResponse response = new EmployeeResponse();
-        response.setId(entity.getId());
-        response.setName(entity.getName());
-        response.setNameNepali(entity.getNameNepali());
-        response.setEmail(entity.getEmail());
-        response.setPhone(entity.getPhone());
-        response.setCitizenshipNumber(entity.getCitizenshipNumber());
-        response.setPanNumber(entity.getPanNumber());
-        response.setDesignation(entity.getDesignation());
-        response.setEmployeeCode(entity.getEmployeeCode());
-        response.setDateOfBirth(entity.getDateOfBirth());
-        response.setDateOfBirthBS(entity.getDateOfBirthBS());
-        response.setJoinDate(entity.getJoinDate());
-        response.setJoinDateBS(entity.getJoinDateBS());
-        response.setStatus(entity.getStatus());
-        response.setCreatedAt(entity.getCreatedAt());
-        response.setUpdatedAt(entity.getUpdatedAt());
+        EmployeeResponse.EmployeeResponseBuilder builder = EmployeeResponse.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .nameNepali(entity.getNameNepali())
+                .email(entity.getEmail())
+                .phone(entity.getPhone())
+                .citizenshipNumber(entity.getCitizenshipNumber())
+                .panNumber(entity.getPanNumber())
+                .designation(entity.getDesignation())
+                .employeeCode(entity.getEmployeeCode())
+                .dateOfBirth(entity.getDateOfBirth())
+                .dateOfBirthBS(entity.getDateOfBirthBS())
+                .joinDate(entity.getJoinDate())
+                .joinDateBS(entity.getJoinDateBS())
+                .status(entity.getStatus())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt());
         if (entity.getDepartment() != null) {
-            response.setDepartmentId(entity.getDepartment().getId());
-            response.setDepartmentName(entity.getDepartment().getName());
+            builder.departmentId(entity.getDepartment().getId())
+                    .departmentName(entity.getDepartment().getName());
         }
-        return response;
+        return builder.build();
     }
 }

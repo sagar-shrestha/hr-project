@@ -4,9 +4,10 @@ import com.sagar.hr.employee.dto.request.CreateEmployeeRequest;
 import com.sagar.hr.employee.dto.request.UpdateEmployeeRequest;
 import com.sagar.hr.employee.dto.response.EmployeeResponse;
 import com.sagar.hr.employee.service.EmployeeService;
+import com.sagar.hr.util.pojo.response.GlobalApiResponse;
+import com.sagar.hr.util.util.ControllerUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,29 +21,32 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<List<EmployeeResponse>> getAll() {
-        return ResponseEntity.ok(employeeService.findAll());
+    public ResponseEntity<GlobalApiResponse> getAll() {
+        List<EmployeeResponse> employees = employeeService.findAll();
+        return ControllerUtil.ok("Employees retrieved", employees);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(employeeService.findById(id));
+    public ResponseEntity<GlobalApiResponse> getById(@PathVariable Long id) {
+        EmployeeResponse employee = employeeService.findById(id);
+        return ControllerUtil.ok("Employee retrieved", employee);
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeResponse> create(@Valid @RequestBody CreateEmployeeRequest request) {
+    public ResponseEntity<GlobalApiResponse> create(@Valid @RequestBody CreateEmployeeRequest request) {
         EmployeeResponse response = employeeService.create(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ControllerUtil.created("Employee created", response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeResponse> update(@PathVariable Long id, @Valid @RequestBody UpdateEmployeeRequest request) {
-        return ResponseEntity.ok(employeeService.update(id, request));
+    public ResponseEntity<GlobalApiResponse> update(@PathVariable Long id, @Valid @RequestBody UpdateEmployeeRequest request) {
+        EmployeeResponse response = employeeService.update(id, request);
+        return ControllerUtil.ok("Employee updated", response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<GlobalApiResponse> delete(@PathVariable Long id) {
         employeeService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ControllerUtil.noContent("Employee deleted");
     }
 }

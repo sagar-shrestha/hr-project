@@ -9,8 +9,21 @@ When starting any task, read from ALL of these directories for full context:
 | Directory | What to read | Purpose |
 |---|---|---|
 | `.opencode/rules/` | `AGENTS.md`, `hr-project-rrules.md` | Project dev rules, coding standards, architecture |
-| `.opencode/skills/` | `HR-REQUIREMENT.md`, `project-memory.md`, `architecture-memory.md`, `design-memory.md`, `agents/*.json`, `decisions/` | Nepali domain knowledge, project memory, historical decisions |
+| `.opencode/skills/` | `nepali-domain/SKILL.md`, `HR-REQUIREMENT.md`, `project-memory.md`, `architecture-memory.md`, `design-memory.md`, `agents/*.json`, `decisions/` | Nepali domain knowledge, project memory, historical decisions |
 | `.opencode/` | `AGENTS.md` | OpenCode instructions, MCP PostgreSQL tools |
+
+---
+
+## Agent Memory Auto-Load
+
+Load domain-specific agent memories for context before writing code:
+
+| When working on... | Read this file |
+|---|---|
+| Backend code (Java, Spring Boot, JPA, Flyway) | `.opencode/skills/agents/backend-engineer-memory.json` — recent tasks, known patterns, circular dependency risks, API conventions |
+| Frontend code (Angular, TypeScript, Tailwind, RxJS) | `.opencode/skills/agents/frontend-engineer-memory.json` — component patterns, build risks, UI conventions |
+
+These files store recent task history, known risks, and open issues for each domain. Reading them prevents regression and preserves context across sessions.
 
 ---
 
@@ -166,8 +179,27 @@ Controllers must:
 - Handle HTTP requests only
 - Validate requests
 - Call services
-- Return DTOs
+- Return DTOs wrapped in `GlobalApiResponse`
 - Return proper HTTP status codes
+
+All controllers must return `ResponseEntity<GlobalApiResponse>`.
+
+Every endpoint must wrap its response:
+
+```java
+return ResponseEntity.status(HttpStatus.OK).body(GlobalApiResponse.builder()
+        .httpStatus(200)
+        .message("Users retrieved")
+        .data(userService.getAllUsers())
+        .status(true)
+        .build());
+```
+
+Or use the companion helper (`com.sagar.hr.util.util.ControllerUtil`):
+
+```java
+return ControllerUtil.ok("Users retrieved", userService.getAllUsers());
+```
 
 Controllers must NOT:
 
@@ -178,7 +210,7 @@ Controllers must NOT:
 
 Good:
 
-Controller -> Service
+Controller -> Service -> ResponseEntity<GlobalApiResponse>
 
 Bad:
 
@@ -524,6 +556,45 @@ Controllers and services should not manually copy fields.
 
 ---
 
+# Builder Pattern Rules
+
+All classes must use Lombok `@Builder` for object construction.
+
+Required annotation set on every DTO, entity, and model class:
+
+```java
+@Getter
+@Setter
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+```
+
+Rules:
+
+- `@Builder` enables programmatic construction via `.builder().field(value).build()`
+- `@ToString` is required for logging and debugging
+- All mapper `.toResponse()` methods must use the builder pattern, never `new DTO()` + setters
+- Entity construction in services must use builder over manual `new Entity()` + setters where possible
+- For entity collection fields with field initializers, add `@Builder.Default`:
+
+```java
+@Builder.Default
+private Set<Role> roles = new HashSet<>();
+```
+
+Do NOT add `@Builder` to:
+
+- Enum types
+- Classes that only exist for Jackson deserialization (framework-internal classes)
+
+Exceptions:
+
+- If a class inherits from `@MappedSuperclass` with builder annotations, child classes still need their own `@Builder` (Lombok limitation)
+
+---
+
 # Angular Rules
 
 Folder Structure:
@@ -735,3 +806,31 @@ Before finishing:
 □ Logging considered
 
 □ Tests added if applicable
+
+---
+
+# Post-Change Sanity Check
+
+After any code change that affects the frontend or backend, you MUST verify all of the following before declaring the task complete:
+
+1. **FE loads**: `curl -s -o /dev/null -w "%{http_code}" http://localhost:4200/` → must return `200`
+
+2. **Login page loads**: `curl -s -o /dev/null -w "%{http_code}" http://localhost:4200/login` → must return `200`
+
+3. **BE login API works** (full login + protected resource access):
+   ```bash
+   # Login and extract token
+   TOKEN=$(curl -s http://localhost:8080/api/v1/auth/signin -X POST \
+     -H "Content-Type: application/json" \
+     -d '{"username":"adminuser","password":"Admin@admin123"}' \
+     | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['token'])")
+   
+   # Verify token is non-empty
+   [ -n "$TOKEN" ] && echo "Token obtained: OK"
+   
+   # Use token to access a protected endpoint (simulates dashboard access)
+   curl -s http://localhost:8080/api/v1/users -H "Authorization: Bearer $TOKEN" \
+     | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'Protected API: {d[\"httpStatus\"]} - {len(d[\"data\"])} users')"
+   ```
+
+Fix any failures immediately. Do NOT rely on the user to discover regressions.

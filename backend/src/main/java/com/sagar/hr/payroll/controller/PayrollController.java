@@ -7,9 +7,9 @@ import com.sagar.hr.payroll.model.PayrollCalculationResult;
 import com.sagar.hr.payroll.service.PayrollService;
 import com.sagar.hr.payroll.service.SalaryStructureService;
 import com.sagar.hr.util.pojo.response.GlobalApiResponse;
+import com.sagar.hr.util.util.ControllerUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,44 +32,24 @@ public class PayrollController {
         LocalDate start = periodStart != null ? periodStart : LocalDate.now().withDayOfMonth(1);
         LocalDate end = periodEnd != null ? periodEnd : LocalDate.now();
         PayrollCalculationResult result = payrollService.calculateNetSalary(employeeId, structureName, start, end);
-        return ResponseEntity.ok(GlobalApiResponse.builder()
-                .httpStatus(HttpStatus.OK.value())
-                .message("Net salary calculated")
-                .data(result)
-                .status(true)
-                .build());
+        return ControllerUtil.ok("Net salary calculated", result);
     }
 
     @PostMapping("/structures")
     public ResponseEntity<GlobalApiResponse> createStructure(@Valid @RequestBody CreateSalaryStructureRequest request) {
         SalaryStructureResponse created = salaryStructureService.create(request);
-        return ResponseEntity.ok(GlobalApiResponse.builder()
-                .httpStatus(HttpStatus.CREATED.value())
-                .message("Salary structure created")
-                .data(created)
-                .status(true)
-                .build());
+        return ControllerUtil.created("Salary structure created", created);
     }
 
     @PutMapping("/structures/{id}")
     public ResponseEntity<GlobalApiResponse> updateStructure(@PathVariable Long id, @Valid @RequestBody UpdateSalaryStructureRequest request) {
         SalaryStructureResponse updated = salaryStructureService.update(id, request);
-        return ResponseEntity.ok(GlobalApiResponse.builder()
-                .httpStatus(HttpStatus.OK.value())
-                .message("Salary structure updated")
-                .data(updated)
-                .status(true)
-                .build());
+        return ControllerUtil.ok("Salary structure updated", updated);
     }
 
     @DeleteMapping("/structures/{id}")
     public ResponseEntity<GlobalApiResponse> deactivateStructure(@PathVariable Long id) {
         salaryStructureService.deactivate(id);
-        return ResponseEntity.ok(GlobalApiResponse.builder()
-                .httpStatus(HttpStatus.OK.value())
-                .message("Salary structure deactivated and cache evicted")
-                .data(null)
-                .status(true)
-                .build());
+        return ControllerUtil.ok("Salary structure deactivated and cache evicted", null);
     }
 }

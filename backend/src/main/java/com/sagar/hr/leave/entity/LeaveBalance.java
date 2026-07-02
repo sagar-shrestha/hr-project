@@ -3,9 +3,11 @@ package com.sagar.hr.leave.entity;
 import com.sagar.hr.security.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -15,6 +17,8 @@ import java.math.BigDecimal;
 })
 @Getter
 @Setter
+@Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class LeaveBalance {

@@ -1,6 +1,7 @@
 package com.sagar.hr.security.services;
 
 import com.sagar.hr.security.dto.request.SignupRequest;
+import com.sagar.hr.security.dto.request.UpdateUserRequest;
 import com.sagar.hr.security.dto.response.UserResponse;
 import com.sagar.hr.security.mapper.UserMapper;
 import com.sagar.hr.security.model.Role;
@@ -32,6 +33,58 @@ public class UserService {
         return userRepository.findAll().stream()
                 .map(userMapper::toResponse)
                 .toList();
+    }
+
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+        return userMapper.toResponse(user);
+    }
+
+    public UserResponse updateUser(Long id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+
+        if (!user.getUsername().equals(request.getUsername()) && userRepository.existsByUsername(request.getUsername())) {
+            throw new AlreadyInUseException("Username is already taken: " + request.getUsername());
+        }
+
+        if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
+            throw new AlreadyInUseException("Email is already in use: " + request.getEmail());
+        }
+
+        validateCanManageTargetUser(user);
+
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+
+        if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+            user.setPassword(encoder.encode(request.getPassword()));
+        }
+
+        Set<String> strRoles = request.getRoles();
+        Set<Role> roles = new HashSet<>();
+
+        if (strRoles == null || strRoles.isEmpty()) {
+            Role userRole = roleRepository.findByName("ROLE_USER")
+                    .orElseThrow(() -> new NotFoundException("Role ROLE_USER not found."));
+            roles.add(userRole);
+        } else {
+            if (strRoles.contains("ROLE_SUPER_ADMIN")) {
+                throw new NotAbleToAssignException("Cannot assign SUPER_ADMIN role!");
+            }
+            strRoles.forEach(role -> {
+                Role foundRole = roleRepository.findByName(role)
+                        .orElseThrow(() -> new NotFoundException("Role " + role + " not found."));
+                roles.add(foundRole);
+            });
+        }
+
+        validateCanManageTargetRoles(roles);
+        user.setRoles(roles);
+
+        User updatedUser = userRepository.save(user);
+        return userMapper.toResponse(updatedUser);
     }
 
     public UserResponse createUser(SignupRequest signUpRequest) {

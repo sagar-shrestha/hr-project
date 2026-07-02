@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<GlobalApiResponse> handleNullPointerException(NullPointerException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message(SOMETHING_WENT_WRONG)
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AlreadyInUseException.class)
     public ResponseEntity<GlobalApiResponse> handleAlreadyInUseException(AlreadyInUseException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.IM_USED.value())
                 .message(ex.getMessage())
@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<GlobalApiResponse> handleNotFoundException(NotFoundException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.NOT_FOUND.value())
                 .message(ex.getMessage())
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotAbleToAssignException.class)
     public ResponseEntity<GlobalApiResponse> handleNotAbleToAssignException(NotAbleToAssignException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.NOT_ACCEPTABLE.value())
                 .message(ex.getMessage())
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InsufficientLeaveBalanceException.class)
     public ResponseEntity<GlobalApiResponse> handleInsufficientLeaveBalanceException(InsufficientLeaveBalanceException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.BAD_REQUEST.value())
                 .message(ex.getMessage())
@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<GlobalApiResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.BAD_REQUEST.value())
                 .message(ex.getMessage())
@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<GlobalApiResponse> handleIllegalStateException(IllegalStateException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.CONFLICT.value())
                 .message(ex.getMessage())

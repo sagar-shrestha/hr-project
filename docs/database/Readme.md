@@ -1,5 +1,16 @@
 # Database Schema
 
+## departments
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | BIGSERIAL | PK | Auto-generated ID |
+| name | VARCHAR(100) | NOT NULL, UNIQUE | Department name (English) |
+| name_nepali | VARCHAR(100) | | Department name (Nepali / NVARCHAR) |
+| code | VARCHAR(20) | NOT NULL, UNIQUE | Department code |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Row creation timestamp |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Row update timestamp |
+
 ## salary_structures
 
 | Column | Type | Constraints | Description |
@@ -26,3 +37,5 @@
 | V3 | V3__Seed_Roles_And_Permissions.sql | Seed roles and permissions |
 | V4 | V4__Create_Endpoint_Roles_Table.sql | Create endpoint_roles table |
 | V5 | V5__Create_Salary_Structures_Table.sql | Create salary_structures table for payroll |
+| V6 | V6__Create_Departments_Table.sql | Create departments table |
+| V12 | V12__Add_Name_Nepali_To_Departments.sql | Add name_nepali column to departments |

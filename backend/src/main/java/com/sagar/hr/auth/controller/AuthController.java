@@ -3,8 +3,9 @@ package com.sagar.hr.auth.controller;
 import com.sagar.hr.security.dto.request.LoginRequest;
 import com.sagar.hr.security.dto.request.SignupRequest;
 import com.sagar.hr.security.dto.response.JwtResponse;
-import com.sagar.hr.security.dto.response.MessageResponse;
 import com.sagar.hr.auth.service.AuthService;
+import com.sagar.hr.util.pojo.response.GlobalApiResponse;
+import com.sagar.hr.util.util.ControllerUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(value = "/signin")
-    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.authenticateUser(loginRequest));
+    public ResponseEntity<GlobalApiResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        JwtResponse jwtResponse = authService.authenticateUser(loginRequest);
+        return ControllerUtil.ok("Authentication successful", jwtResponse);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        return ResponseEntity.ok(authService.registerUser(signUpRequest));
+    public ResponseEntity<GlobalApiResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        authService.registerUser(signUpRequest);
+        return ControllerUtil.created("User registered successfully", null);
     }
 }

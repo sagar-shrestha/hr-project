@@ -1,6 +1,6 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { Component, Input, Optional, Self, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormsModule } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormsModule, NgControl } from '@angular/forms';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -20,15 +20,23 @@ export function cn(...inputs: ClassValue[]) {
     }
   ],
   template: `
-    <input
-      [type]="type"
-      [placeholder]="placeholder"
-      [class]="inputClasses()"
-      [disabled]="disabled"
-      [(ngModel)]="value"
-      (input)="onInput($event)"
-      (blur)="onBlur()"
-    />
+    <div class="relative">
+      <input
+        [type]="type"
+        [placeholder]="placeholder"
+        [class]="inputClasses()"
+        [disabled]="disabled"
+        [(ngModel)]="value"
+        (input)="onInput($event)"
+        (blur)="onBlur()"
+      />
+      @if (showError()) {
+        <p class="text-xs text-destructive mt-1.5 flex items-center gap-1">
+          <span>•</span>
+          <span>{{ errorMessage() }}</span>
+        </p>
+      }
+    </div>
   `,
   styles: []
 })
@@ -37,14 +45,29 @@ export class InputComponent implements ControlValueAccessor {
   @Input() placeholder: string = '';
   @Input() className: string = '';
   @Input() disabled: boolean = false;
+  @Input() errorMessage: () => string = () => 'This field is required';
 
   value: string = '';
   onChange: any = () => {};
   onTouched: any = () => {};
 
+  constructor(@Optional() @Self() public ngControl: NgControl) {
+    if (this.ngControl) {
+      this.ngControl.valueAccessor = this;
+    }
+  }
+
+  showError(): boolean {
+    return !!this.ngControl?.invalid && (!!this.ngControl?.touched || !!this.ngControl?.dirty);
+  }
+
   inputClasses() {
+    const hasError = this.showError();
     return cn(
-      "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      hasError
+        ? "border-destructive focus-visible:ring-destructive"
+        : "border-input focus-visible:ring-ring",
       this.className
     );
   }

@@ -26,6 +26,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.sagar.hr.util.util.CommonMessages.USER_NOT_FOUND_WITH_ID;
+
 @Service
 @RequiredArgsConstructor
 public class LeaveRequestService {
@@ -49,7 +51,7 @@ public class LeaveRequestService {
     @Transactional
     public LeaveResponse applyLeave(Long userId, ApplyLeaveRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_WITH_ID + userId));
 
         if (request.getStartDate().isAfter(request.getEndDate())) {
             throw new IllegalArgumentException("Start date must be before or equal to end date");
@@ -74,30 +76,29 @@ public class LeaveRequestService {
             }
         }
 
-        LeaveRequest leaveRequest = new LeaveRequest();
-        leaveRequest.setUser(user);
-        leaveRequest.setLeaveType(request.getLeaveType());
-        leaveRequest.setStatus(LeaveStatus.PENDING);
-        leaveRequest.setStartDate(request.getStartDate());
-        leaveRequest.setEndDate(request.getEndDate());
-        leaveRequest.setReason(request.getReason());
-        leaveRequest.setTotalDays((int) totalDays);
-
-        LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
+        LeaveRequest saved = leaveRequestRepository.save(LeaveRequest
+                .builder()
+                .user(user)
+                .leaveType(request.getLeaveType())
+                .status(LeaveStatus.PENDING)
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .reason(request.getReason())
+                .totalDays(Math.toIntExact(totalDays))
+                .build());
         return leaveMapper.toResponse(saved);
     }
 
     @Transactional
     public LeaveResponse approveLeave(Long leaveId, Long approverId, ApproveRejectRequest request) {
-        LeaveRequest leaveRequest = leaveRequestRepository.findById(leaveId)
-                .orElseThrow(() -> new NotFoundException("Leave request not found with id: " + leaveId));
+        LeaveRequest leaveRequest = this.getLeaveRequest(leaveId);
 
         if (leaveRequest.getStatus() != LeaveStatus.PENDING) {
             throw new IllegalStateException("Leave request is already " + leaveRequest.getStatus().name().toLowerCase());
         }
 
         User approver = userRepository.findById(approverId)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + approverId));
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_WITH_ID + approverId));
 
         leaveRequest.setStatus(LeaveStatus.APPROVED);
         leaveRequest.setApprovedBy(approver);
@@ -115,14 +116,12 @@ public class LeaveRequestService {
             balance.setUsedDays(balance.getUsedDays().add(BigDecimal.valueOf(leaveRequest.getTotalDays())));
             leaveBalanceRepository.save(balance);
         }
-
         return leaveMapper.toResponse(saved);
     }
 
     @Transactional
     public LeaveResponse rejectLeave(Long leaveId, Long approverId, ApproveRejectRequest request) {
-        LeaveRequest leaveRequest = leaveRequestRepository.findById(leaveId)
-                .orElseThrow(() -> new NotFoundException("Leave request not found with id: " + leaveId));
+        LeaveRequest leaveRequest = this.getLeaveRequest(leaveId);
 
         if (leaveRequest.getStatus() != LeaveStatus.PENDING) {
             throw new IllegalStateException("Leave request is already " + leaveRequest.getStatus().name().toLowerCase());
@@ -160,7 +159,8 @@ public class LeaveRequestService {
             if (existingTypes.contains(type)) {
                 LeaveBalance balance = balances.stream()
                         .filter(b -> b.getLeaveType() == type)
-                        .findFirst().get();
+                        .findFirst()
+                        .orElseThrow(() -> new NotFoundException("Leave type not found with id: " + type));
                 result.add(LeaveBalanceResponse.builder()
                         .leaveType(type)
                         .totalDays(balance.getTotalDays())
@@ -200,15 +200,20 @@ public class LeaveRequestService {
         }
     }
 
+    private LeaveRequest getLeaveRequest(Long leaveId) {
+        return leaveRequestRepository.findById(leaveId)
+                .orElseThrow(() -> new NotFoundException("Leave request not found with id: " + leaveId));
+    }
+
     public List<LeaveResponse> getUserLeaves(Long userId) {
         return leaveRequestRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
                 .map(leaveMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<LeaveResponse> getPendingLeaves() {
         return leaveRequestRepository.findByStatusOrderByCreatedAtAsc(LeaveStatus.PENDING).stream()
                 .map(leaveMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

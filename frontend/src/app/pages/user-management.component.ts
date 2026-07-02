@@ -167,7 +167,7 @@ import {FormsModule} from '@angular/forms';
                                     <lucide-icon [img]="EyeIcon" class="h-5 w-5" />
                                  </app-button>
                                  @if (canManageUser(user.roles)) {
-                                    <app-button variant="ghost" size="icon" class="h-10 w-10 text-muted-foreground hover:bg-sidebar-primary/10 hover:text-sidebar-primary rounded-xl transition-all duration-200" title="Edit user">
+                                    <app-button variant="ghost" size="icon" class="h-10 w-10 text-muted-foreground hover:bg-sidebar-primary/10 hover:text-sidebar-primary rounded-xl transition-all duration-200" (click)="$event.stopPropagation(); editUser(user.id!)" title="Edit user">
                                        <lucide-icon [img]="EditIcon" class="h-5 w-5" />
                                     </app-button>
                                     <app-button variant="ghost" size="icon" class="h-10 w-10 text-destructive/70 hover:bg-destructive/10 hover:text-destructive rounded-xl transition-all duration-200" (click)="$event.stopPropagation(); deleteUser(user.id!)" title="Delete user">
@@ -313,6 +313,10 @@ export class UserManagementComponent implements OnInit {
 
   addNewUser() {
     this.router.navigate(['/users/new']);
+  }
+
+  editUser(id: number) {
+    this.router.navigate(['/users', id, 'edit']);
   }
 
   viewDetails(id: number) {
