@@ -2,6 +2,7 @@ package com.sagar.hr.security.auth_manager;
 
 import com.sagar.hr.security.model.EndpointRole;
 import com.sagar.hr.security.repository.EndpointRoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.core.Authentication;
@@ -16,15 +17,11 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class DynamicAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
     private final EndpointRoleRepository endpointRoleRepository;
     private final RoleHierarchy roleHierarchy;
-
-    public DynamicAuthorizationManager(EndpointRoleRepository endpointRoleRepository, RoleHierarchy roleHierarchy) {
-        this.endpointRoleRepository = endpointRoleRepository;
-        this.roleHierarchy = roleHierarchy;
-    }
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -60,40 +57,12 @@ public class DynamicAuthorizationManager implements AuthorizationManager<Request
                 if (authorityNames.contains(requiredRole)) {
                     return new AuthorizationDecision(true);
                 }
+                // Rule matched but user lacks required role — deny immediately
+                return new AuthorizationDecision(false);
             }
         }
 
-        // If no rule matches, we can decide: deny by default, OR assume it's a
-        // "permitAll" if likely handled elsewhere.
-        // But for "access(dynamicAuthorizationManager)", if we return false/null, it
-        // typically denies.
-        // However, we want to allow access if NO rule is defined? Or Deny?
-        // Safe default is DENY if no rule matches, but we must be careful about public
-        // endpoints.
-        // Actually, public endpoints are handled by 'permitAll()' in SecurityConfig
-        // BEFORE this manager is called (if order matters) OR
-        // we can return true here if no rule matches (allow list approach vs deny
-        // list).
-        // Let's assume: If a rule exists, enforce it. If no rule exists, allow it (or
-        // let other filters decide).
-        // BUT, since we are replacing specific role checks, we probably only want to
-        // verify RESTRICTED endpoints.
-
-        // Let's return TRUE (granted) if no rule matches, effectively making it "Open
-        // unless restricted".
-        // Use with caution.
-        // ALITER: Return FALSE (deny) and ensure all public endpoints are in
-        // 'permitAll' in config.
-
-        // Let's go with: Rules define RESTRICTIONS. If matched, must satisfy.
-        // If NO rule matches the path, we assume generic authenticated user is fine?
-        // Wait, usually we say "anyRequest().authenticated()".
-        // If we plug this into "anyRequest().access(...)", it handles EVERYTHING.
-
-        // Let's return FALSE (deny) if no rule allows it in the DB, UNLESS we want to
-        // fallback to "authenticated".
-        // Let's try to verify if the user is just authenticated.
-
+        // No rule matched this endpoint — allow any authenticated user
         boolean isAuthenticated = authentication.get().isAuthenticated()
                 && !"anonymousUser".equals(authentication.get().getName());
         return new AuthorizationDecision(isAuthenticated);

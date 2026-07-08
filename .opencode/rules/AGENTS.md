@@ -833,4 +833,10 @@ After any code change that affects the frontend or backend, you MUST verify all 
      | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'Protected API: {d[\"httpStatus\"]} - {len(d[\"data\"])} users')"
    ```
 
+4. **FE Playwright E2E test**: Use Playwright (available via `npx playwright` or installed in `/tmp`) to test critical user flows after frontend changes:
+   ```bash
+   node /tmp/test-login.js   # Basic test - fills login form, submits, checks dashboard loads
+   ```
+   The test must navigate to login, fill credentials, submit, and confirm the dashboard renders. Fix any console errors (`PAGE_ERROR`) or failed assertions immediately.
+
 Fix any failures immediately. Do NOT rely on the user to discover regressions.

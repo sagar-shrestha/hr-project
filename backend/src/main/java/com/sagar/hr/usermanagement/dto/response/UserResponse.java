@@ -1,4 +1,4 @@
-package com.sagar.hr.security.dto.response;
+package com.sagar.hr.usermanagement.dto.response;
 
 import lombok.*;
 

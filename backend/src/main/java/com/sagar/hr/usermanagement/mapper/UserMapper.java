@@ -1,8 +1,8 @@
-package com.sagar.hr.security.mapper;
+package com.sagar.hr.usermanagement.mapper;
 
-import com.sagar.hr.security.dto.response.UserResponse;
 import com.sagar.hr.security.model.Role;
 import com.sagar.hr.security.model.User;
+import com.sagar.hr.usermanagement.dto.response.UserResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;

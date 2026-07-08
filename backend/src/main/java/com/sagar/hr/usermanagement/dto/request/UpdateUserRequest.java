@@ -1,4 +1,4 @@
-package com.sagar.hr.security.dto.request;
+package com.sagar.hr.usermanagement.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,5 +26,5 @@ public class UpdateUserRequest {
     private Set<String> roles;
 
     @Size(max = 40)
-    private String password; // Optional: Only updated if provided
+    private String password;
 }

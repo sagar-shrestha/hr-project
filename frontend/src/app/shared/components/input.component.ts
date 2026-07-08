@@ -1,4 +1,4 @@
-import { Component, Input, Optional, Self, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef, Injector, inject, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormsModule, NgControl } from '@angular/forms';
 import { clsx, type ClassValue } from 'clsx';
@@ -40,7 +40,7 @@ export function cn(...inputs: ClassValue[]) {
   `,
   styles: []
 })
-export class InputComponent implements ControlValueAccessor {
+export class InputComponent implements ControlValueAccessor, AfterViewInit {
   @Input() type: string = 'text';
   @Input() placeholder: string = '';
   @Input() className: string = '';
@@ -51,14 +51,20 @@ export class InputComponent implements ControlValueAccessor {
   onChange: any = () => {};
   onTouched: any = () => {};
 
-  constructor(@Optional() @Self() public ngControl: NgControl) {
-    if (this.ngControl) {
-      this.ngControl.valueAccessor = this;
-    }
+  private injector = inject(Injector);
+  private _ngControl: NgControl | null = null;
+
+  ngAfterViewInit(): void {
+    try {
+      const ngControl = this.injector.get(NgControl, null);
+      if (ngControl) {
+        this._ngControl = ngControl;
+      }
+    } catch {}
   }
 
   showError(): boolean {
-    return !!this.ngControl?.invalid && (!!this.ngControl?.touched || !!this.ngControl?.dirty);
+    return !!this._ngControl?.invalid && (!!this._ngControl?.touched || !!this._ngControl?.dirty);
   }
 
   inputClasses() {

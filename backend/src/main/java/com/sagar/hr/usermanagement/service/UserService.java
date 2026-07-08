@@ -1,13 +1,14 @@
-package com.sagar.hr.security.services;
+package com.sagar.hr.usermanagement.service;
 
 import com.sagar.hr.security.dto.request.SignupRequest;
-import com.sagar.hr.security.dto.request.UpdateUserRequest;
-import com.sagar.hr.security.dto.response.UserResponse;
-import com.sagar.hr.security.mapper.UserMapper;
 import com.sagar.hr.security.model.Role;
 import com.sagar.hr.security.model.User;
-import com.sagar.hr.security.repository.UserRepository;
 import com.sagar.hr.security.repository.RoleRepository;
+import com.sagar.hr.security.repository.UserRepository;
+import com.sagar.hr.security.services.UserDetailsImpl;
+import com.sagar.hr.usermanagement.dto.request.UpdateUserRequest;
+import com.sagar.hr.usermanagement.dto.response.UserResponse;
+import com.sagar.hr.usermanagement.mapper.UserMapper;
 import com.sagar.hr.util.exception.AlreadyInUseException;
 import com.sagar.hr.util.exception.NotAbleToAssignException;
 import com.sagar.hr.util.exception.NotFoundException;
@@ -138,7 +139,7 @@ public class UserService {
             roles.add(userRole);
         } else {
             if (strRoles.contains("ROLE_SUPER_ADMIN")) {
-                throw new NotAbleToAssignException("Cannot create or assign SUPER_ADMIN role!");
+                throw new NotAbleToAssignException("Cannot assign SUPER_ADMIN role!");
             }
             strRoles.forEach(role -> {
                 Role foundRole = roleRepository.findByName(role)
