@@ -1,5 +1,6 @@
 package com.sagar.hr.employee.dto.response;
 
+import com.sagar.hr.util.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,7 +32,7 @@ public class EmployeeResponse {
     private String dateOfBirthBS;
     private LocalDate joinDate;
     private String joinDateBS;
-    private String status;
+    private Status status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -9,7 +9,8 @@ Monolithic Spring Boot backend with a JWT-secured REST API. PostgreSQL for persi
 - **Auth / Security** — JWT authentication, role-based & dynamic endpoint authorization
 - **Permission** — permission management
 - **Payroll** — salary computation with decorator-based caching (Spring Cache + Redis)
-- **Util** — shared exception handling, response wrappers, constants
+- **Audit** — Hibernate Envers audit trail; every entity extends `AuditableEntity`, revisions stored in `revinfo` + `*_AUD` tables, history exposed via `/api/v1/audit/{entity}/{id}`
+- **Util** — shared exception handling, response wrappers, constants, audit infrastructure
 
 ## Key Patterns
 
@@ -17,6 +18,7 @@ Monolithic Spring Boot backend with a JWT-secured REST API. PostgreSQL for persi
 - **Interface abstraction** — `PayrollCalculator` interface with `calculate`/`invalidateCache` enables future provider changes.
 - **Spring Cache annotations** — `@Cacheable`/`@CacheEvict` keep caching declarative and provider-agnostic.
 - **Global API response** — All endpoints return `GlobalApiResponse` wrapping status, message, and payload.
+- **Auditing** — `@Audited` entities + Spring Data `@CreatedBy/@LastModifiedBy` on the shared `AuditableEntity` base; `AuditRevisionListener` records the acting user per revision.
 
 ## Technology Stack
 

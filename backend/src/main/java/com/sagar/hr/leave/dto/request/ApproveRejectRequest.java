@@ -1,5 +1,6 @@
 package com.sagar.hr.leave.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -10,5 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ApproveRejectRequest {
 
+    @NotNull
+    private Long id;
     private String remarks;
 }

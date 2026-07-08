@@ -15,7 +15,7 @@ public class SalaryStructureMapper {
                 .allowances(s.getAllowances())
                 .deductions(s.getDeductions())
                 .taxRate(s.getTaxRate())
-                .active(s.isActive())
+                .active(Boolean.TRUE.equals(s.getActive()))
                 .employeeId(s.getEmployeeId())
                 .effectiveFrom(s.getEffectiveFrom())
                 .effectiveTo(s.getEffectiveTo())

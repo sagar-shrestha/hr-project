@@ -122,6 +122,7 @@ export class DashboardSidebarComponent {
     { label: 'User Management', path: '/users', icon: Users, role: 'ROLE_ADMIN' },
     { label: 'Employees', path: '/employees', icon: Users, role: 'ROLE_ADMIN' },
     { label: 'Permissions', path: '/permissions', icon: ShieldCheck, role: 'ROLE_SUPER_ADMIN' },
+    { label: 'Endpoint Roles', path: '/endpoint-roles', icon: ShieldCheck, role: 'ROLE_MODERATOR' },
     { label: 'Leaves', path: '/leaves', icon: Calendar },
     { label: 'Payroll', path: '/payroll', icon: Briefcase, role: 'ROLE_ADMIN' },
     { label: 'Jobs', path: '/dashboard/jobs', icon: Briefcase },

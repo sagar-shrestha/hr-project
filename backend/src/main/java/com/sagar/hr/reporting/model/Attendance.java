@@ -1,7 +1,9 @@
 package com.sagar.hr.reporting.model;
 
+import com.sagar.hr.util.audit.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.envers.Audited;
 
 import java.time.LocalDate;
 
@@ -13,7 +15,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Attendance {
+@Audited
+public class Attendance extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

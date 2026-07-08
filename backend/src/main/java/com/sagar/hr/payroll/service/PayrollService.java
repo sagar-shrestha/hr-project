@@ -7,7 +7,6 @@ import com.sagar.hr.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service

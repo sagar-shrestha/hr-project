@@ -443,6 +443,9 @@ Rules:
 - No hardcoded roles
 - Permissions stored in database
 - All protected endpoints require authorization
+- Do NOT use @PreAuthorize or method-level annotations with hardcoded roles
+- Authorization is enforced only via DynamicAuthorizationManager + endpoint_roles (DB-backed)
+- Every protected endpoint must have an endpoint_roles seed; no seed = any authenticated user
 
 Example permissions:
 

@@ -1,8 +1,6 @@
 package com.sagar.hr.leave.mapper;
 
-import com.sagar.hr.leave.dto.response.LeaveBalanceResponse;
 import com.sagar.hr.leave.dto.response.LeaveResponse;
-import com.sagar.hr.leave.entity.LeaveBalance;
 import com.sagar.hr.leave.entity.LeaveRequest;
 import org.springframework.stereotype.Component;
 

@@ -1,23 +1,20 @@
 package com.sagar.hr.employee.entity;
 
 import com.sagar.hr.department.model.Department;
+import com.sagar.hr.util.audit.AuditableEntity;
+import com.sagar.hr.util.enums.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.envers.Audited;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "employees", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "email"),
-    @UniqueConstraint(columnNames = "citizenship_number"),
-    @UniqueConstraint(columnNames = "pan_number"),
-    @UniqueConstraint(columnNames = "employee_code")
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "citizenship_number"),
+        @UniqueConstraint(columnNames = "pan_number"),
+        @UniqueConstraint(columnNames = "employee_code")
 })
 @Getter
 @Setter
@@ -25,7 +22,8 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee {
+@Audited
+public class Employee extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +47,7 @@ public class Employee {
     private String panNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id", referencedColumnName = "id")
+    @JoinColumn(name = "department_id", foreignKey = @ForeignKey(name = "fk_employee_department_id"), referencedColumnName = "id")
     private Department department;
 
     private String designation;
@@ -69,24 +67,7 @@ public class Employee {
     @Column(name = "join_date_bs", length = 10)
     private String joinDateBS;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String status = "ACTIVE";
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        if (status == null) status = "ACTIVE";
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    private Status status = Status.ACTIVE;
 }

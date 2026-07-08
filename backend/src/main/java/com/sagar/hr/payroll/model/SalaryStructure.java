@@ -1,5 +1,6 @@
 package com.sagar.hr.payroll.model;
 
+import com.sagar.hr.util.audit.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,7 +21,8 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class SalaryStructure {
+@Audited
+public class SalaryStructure extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,34 +43,11 @@ public class SalaryStructure {
     @Column(nullable = false)
     private BigDecimal taxRate;
 
-    @Column(nullable = false)
-    private boolean active;
-
     private Long employeeId;
 
     private LocalDateTime effectiveFrom;
 
     private LocalDateTime effectiveTo;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        if (effectiveFrom == null) {
-            effectiveFrom = LocalDateTime.now();
-        }
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
     public BigDecimal getNetSalary() {
         BigDecimal gross = basicSalary.add(allowances);

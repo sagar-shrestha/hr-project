@@ -1,5 +1,6 @@
 package com.sagar.hr.employee.dto.request;
 
+import com.sagar.hr.util.enums.Status;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,5 +46,5 @@ public class UpdateEmployeeRequest {
 
     private String joinDateBS;
 
-    private String status;
+    private Status status;
 }

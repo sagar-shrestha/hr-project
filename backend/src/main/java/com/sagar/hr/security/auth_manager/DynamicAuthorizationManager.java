@@ -1,7 +1,7 @@
 package com.sagar.hr.security.auth_manager;
 
 import com.sagar.hr.security.model.EndpointRole;
-import com.sagar.hr.security.repository.EndpointRoleRepository;
+import com.sagar.hr.endpointrole.repository.EndpointRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;

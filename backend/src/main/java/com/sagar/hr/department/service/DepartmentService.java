@@ -1,47 +1,22 @@
 package com.sagar.hr.department.service;
 
 import com.sagar.hr.department.model.Department;
-import com.sagar.hr.department.repository.DepartmentRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
-public class DepartmentService {
+public interface DepartmentService {
 
-    private final DepartmentRepository departmentRepository;
+    List<Department> findAll();
 
-    public List<Department> findAll() {
-        return departmentRepository.findAll();
-    }
+    Optional<Department> findById(Long id);
 
-    public Optional<Department> findById(Long id) {
-        return departmentRepository.findById(id);
-    }
+    Optional<Department> findByName(String name);
 
-    public Optional<Department> findByName(String name) {
-        return departmentRepository.findByName(name);
-    }
+    Optional<Department> findByCode(String code);
 
-    public Optional<Department> findByCode(String code) {
-        return departmentRepository.findByCode(code);
-    }
+    Department save(Department department);
 
-    @Transactional
-    public Department save(Department department) {
-        return departmentRepository.save(department);
-    }
+    boolean deleteById(Long id);
 
-    @Transactional
-    public void deleteById(Long id) {
-        departmentRepository.deleteById(id);
-    }
-
-    public boolean existsById(Long id) {
-        return departmentRepository.existsById(id);
-    }
 }
