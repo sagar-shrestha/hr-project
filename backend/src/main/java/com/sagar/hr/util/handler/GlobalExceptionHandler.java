@@ -1,7 +1,8 @@
 package com.sagar.hr.util.handler;
 
+import com.sagar.hr.leave.exception.InsufficientLeaveBalanceException;
 import com.sagar.hr.util.exception.AlreadyInUseException;
-import com.sagar.hr.util.exception.NotAbleTOAssignException;
+import com.sagar.hr.util.exception.NotAbleToAssignException;
 import com.sagar.hr.util.exception.NotFoundException;
 import com.sagar.hr.util.pojo.response.GlobalApiResponse;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<GlobalApiResponse> handleNullPointerException(NullPointerException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .message(SOMETHING_WENT_WRONG)
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AlreadyInUseException.class)
     public ResponseEntity<GlobalApiResponse> handleAlreadyInUseException(AlreadyInUseException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.IM_USED.value())
                 .message(ex.getMessage())
@@ -38,7 +39,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<GlobalApiResponse> handleNotFoundException(NotFoundException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.NOT_FOUND.value())
                 .message(ex.getMessage())
@@ -47,11 +48,44 @@ public class GlobalExceptionHandler {
                 .build());
     }
 
-    @ExceptionHandler(NotAbleTOAssignException.class)
-    public ResponseEntity<GlobalApiResponse> handleNotAbleTOAssignException(NotAbleTOAssignException ex) {
-        return ResponseEntity.ok(GlobalApiResponse
+    @ExceptionHandler(NotAbleToAssignException.class)
+    public ResponseEntity<GlobalApiResponse> handleNotAbleToAssignException(NotAbleToAssignException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(GlobalApiResponse
                 .builder()
                 .httpStatus(HttpStatus.NOT_ACCEPTABLE.value())
+                .message(ex.getMessage())
+                .data(null)
+                .status(false)
+                .build());
+    }
+
+    @ExceptionHandler(InsufficientLeaveBalanceException.class)
+    public ResponseEntity<GlobalApiResponse> handleInsufficientLeaveBalanceException(InsufficientLeaveBalanceException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(GlobalApiResponse
+                .builder()
+                .httpStatus(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .data(null)
+                .status(false)
+                .build());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<GlobalApiResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(GlobalApiResponse
+                .builder()
+                .httpStatus(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .data(null)
+                .status(false)
+                .build());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<GlobalApiResponse> handleIllegalStateException(IllegalStateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(GlobalApiResponse
+                .builder()
+                .httpStatus(HttpStatus.CONFLICT.value())
                 .message(ex.getMessage())
                 .data(null)
                 .status(false)

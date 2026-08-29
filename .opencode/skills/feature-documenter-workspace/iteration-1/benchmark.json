@@ -1,0 +1,305 @@
+{
+  "metadata": {
+    "skill_name": "feature-documenter",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-06-27T09:16:09Z",
+    "evals_run": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Created docs/features/leave-management/Readme.md",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "API doc includes leave endpoints",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "Database doc includes leave_requests and V5",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "Changelog created for leave session",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "Created backend leave module (entity, repository, service, controller)",
+          "passed": true,
+          "evidence": "found in summary"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "API doc created with attendance-summary endpoint",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "Changelog created for attendance session",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "Baseline: docs/features/reporting was created as a new module",
+          "passed": true,
+          "evidence": "found in summary"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Database doc updated with departments table and V6",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "Features doc created for departments",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "Changelog created for departments session",
+          "passed": true,
+          "evidence": "found in summary"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "ADR created for Redis caching decision",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "ADR follows template with Context/Decision/Consequences",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "Architecture doc updated to mention caching",
+          "passed": true,
+          "evidence": "found in summary"
+        },
+        {
+          "text": "Changelog created for caching session",
+          "passed": true,
+          "evidence": "found in summary"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Baseline: no docs/ created (no documentation mentioned)",
+          "passed": true,
+          "evidence": "found in summary"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Baseline: no documentation files created",
+          "passed": true,
+          "evidence": "found in summary"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Baseline: no documentation files created",
+          "passed": true,
+          "evidence": "found in summary"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Baseline: ADR created (explicitly requested in prompt)",
+          "passed": true,
+          "evidence": "found in summary"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": []
+}

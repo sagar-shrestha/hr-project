@@ -4,7 +4,7 @@ import com.sagar.hr.security.auth_manager.DynamicAuthorizationManager;
 import com.sagar.hr.security.jwt.AuthEntryPointJwt;
 import com.sagar.hr.security.jwt.AuthTokenFilter;
 import com.sagar.hr.security.jwt.JwtUtils;
-import com.sagar.hr.security.repository.EndpointRoleRepository;
+import com.sagar.hr.endpointrole.repository.EndpointRoleRepository;
 import com.sagar.hr.security.services.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

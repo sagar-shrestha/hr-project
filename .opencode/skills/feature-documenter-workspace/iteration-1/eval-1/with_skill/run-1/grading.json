@@ -1,0 +1,38 @@
+{
+  "expectations": [
+    {
+      "text": "Created docs/features/leave-management/Readme.md",
+      "passed": true,
+      "evidence": "found in summary"
+    },
+    {
+      "text": "API doc includes leave endpoints",
+      "passed": true,
+      "evidence": "found in summary"
+    },
+    {
+      "text": "Database doc includes leave_requests and V5",
+      "passed": true,
+      "evidence": "found in summary"
+    },
+    {
+      "text": "Changelog created for leave session",
+      "passed": true,
+      "evidence": "found in summary"
+    },
+    {
+      "text": "Created backend leave module (entity, repository, service, controller)",
+      "passed": true,
+      "evidence": "found in summary"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "user_notes_summary": {},
+  "eval_feedback": {}
+}

@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "leave-management-module",
+  "prompt": "I need a new leave management module. Create the backend structure for it — entity, repository, service, controller under com.sagar.hr.leave. Leave has types (annual, sick, maternity, paternity), each with different accrual rules. Include REST endpoints for apply, approve, reject, and view balance. Use Flyway V5 for the leave_requests table. This is a real HRMS project for the Nepali market.",
+  "assertions": [
+    "docs/features/leave-management/Readme.md exists and describes the leave module's responsibilities, key components, API surface, and domain rules",
+    "docs/api/Readme.md has entries for leave endpoints (apply, approve, reject, balance)",
+    "docs/database/Readme.md has leave_requests table documented and V5 migration listed",
+    "docs/changelog/ has an entry for this session",
+    "The feature doc is generalized (no full code dumps, no line-by-line explanations)",
+    "Backend source files for leave module exist under com.sagar.hr.leave"
+  ]
+}

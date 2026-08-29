@@ -1,4 +1,15 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: auth_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   backup:
     image: postgres:15-alpine
     container_name: auth_backup
@@ -24,12 +35,16 @@ services:
       - "8080:8080"
     depends_on:
       - postgres_db
+      - redis
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/auth_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - APP_JWTSECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
       - APP_JWTEXPIRATIONMS=86400000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PAYROLL_CACHE_ENABLED=true
 
   postgres_db:
     image: postgres:15-alpine

@@ -1,7 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { UserService } from '../core/services/user.service';
 import { SidebarService } from '../core/services/sidebar.service';
 import { DashboardSidebarComponent } from '../shared/components/dashboard-sidebar.component';
@@ -9,7 +9,7 @@ import { DashboardHeaderComponent } from '../shared/components/dashboard-header.
 import { CardComponent, CardHeaderComponent, CardTitleComponent, CardContentComponent } from '../shared/components/card.component';
 import { ButtonComponent } from '../shared/components/button.component';
 import { InputComponent } from '../shared/components/input.component';
-import { LucideAngularModule, ArrowLeft, UserPlus, Loader2 } from 'lucide-angular';
+import { LucideAngularModule, ArrowLeft, UserPlus, Edit, Loader2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-user-form',
@@ -48,11 +48,15 @@ import { LucideAngularModule, ArrowLeft, UserPlus, Loader2 } from 'lucide-angula
               <app-card-title>
                 <div class="flex items-center gap-3">
                   <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-sidebar-primary to-sidebar-accent flex items-center justify-center">
-                    <lucide-icon [img]="UserPlusIcon" class="h-5 w-5 text-white" />
+                    <lucide-icon [img]="isEditMode() ? EditIcon : UserPlusIcon" class="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h1 class="text-2xl font-display font-bold tracking-tight">Add New User</h1>
-                    <p class="text-sm text-muted-foreground">Create a new user account with role assignments</p>
+                    <h1 class="text-2xl font-display font-bold tracking-tight">
+                      {{ isEditMode() ? 'Edit User' : 'Add New User' }}
+                    </h1>
+                    <p class="text-sm text-muted-foreground">
+                      {{ isEditMode() ? 'Modify user account details and roles' : 'Create a new user account with role assignments' }}
+                    </p>
                   </div>
                 </div>
               </app-card-title>
@@ -94,7 +98,9 @@ import { LucideAngularModule, ArrowLeft, UserPlus, Loader2 } from 'lucide-angula
                 </div>
 
                 <div class="space-y-2">
-                  <label for="password" class="text-sm font-medium">Password</label>
+                  <label for="password" class="text-sm font-medium">
+                    {{ isEditMode() ? 'Password (leave blank to keep current)' : 'Password' }}
+                  </label>
                   <app-input
                     id="password"
                     type="password"
@@ -124,10 +130,10 @@ import { LucideAngularModule, ArrowLeft, UserPlus, Loader2 } from 'lucide-angula
                   <app-button type="submit" variant="default" [loading]="loading()" class="h-12 px-8">
                     @if (loading()) {
                       <lucide-icon [img]="LoaderIcon" class="mr-2 h-4 w-4 animate-spin" />
-                      Creating...
+                      {{ isEditMode() ? 'Updating...' : 'Creating...' }}
                     } @else {
-                      <lucide-icon [img]="UserPlusIcon" class="mr-2 h-5 w-5" />
-                      Create User
+                      <lucide-icon [img]="isEditMode() ? EditIcon : UserPlusIcon" class="mr-2 h-5 w-5" />
+                      {{ isEditMode() ? 'Update User' : 'Create User' }}
                     }
                   </app-button>
                   <app-button type="button" variant="outline" (click)="goBack()" class="h-12 px-8">
@@ -146,25 +152,56 @@ import { LucideAngularModule, ArrowLeft, UserPlus, Loader2 } from 'lucide-angula
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   `]
 })
-export class UserFormComponent {
+export class UserFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   sidebarService = inject(SidebarService);
 
   ArrowLeftIcon = ArrowLeft;
   UserPlusIcon = UserPlus;
+  EditIcon = Edit;
   LoaderIcon = Loader2;
+
+  userId = signal<number | null>(null);
+  isEditMode = signal(false);
+  loading = signal(false);
+  errorMessage = signal('');
 
   userForm = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: [''],
     role: ['ROLE_USER', Validators.required],
   });
 
-  loading = signal(false);
-  errorMessage = signal('');
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.userId.set(Number(id));
+      this.isEditMode.set(true);
+      this.loading.set(true);
+      this.userService.getUser(Number(id)).subscribe({
+        next: (user) => {
+          this.userForm.patchValue({
+            username: user.username,
+            email: user.email,
+            role: user.roles && user.roles.length > 0 ? user.roles[0] : 'ROLE_USER'
+          });
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage.set('Failed to load user data.');
+          this.loading.set(false);
+        }
+      });
+    } else {
+      this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+      this.userForm.get('password')?.updateValueAndValidity();
+    }
+  }
 
   onSubmit() {
     if (this.userForm.invalid) return;
@@ -172,19 +209,26 @@ export class UserFormComponent {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    const formData = {
+    const formData: any = {
       username: this.userForm.value.username,
       email: this.userForm.value.email,
-      password: this.userForm.value.password,
       roles: [this.userForm.value.role],
     };
 
-    this.userService.createUser(formData).subscribe({
+    if (this.userForm.value.password) {
+      formData.password = this.userForm.value.password;
+    }
+
+    const request$ = this.isEditMode()
+      ? this.userService.updateUser(this.userId()!, formData)
+      : this.userService.createUser(formData);
+
+    request$.subscribe({
       next: () => {
         this.router.navigate(['/users']);
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Failed to create user. Please try again.');
+        this.errorMessage.set(err.error?.message || `Failed to ${this.isEditMode() ? 'update' : 'create'} user. Please try again.`);
         this.loading.set(false);
       },
     });

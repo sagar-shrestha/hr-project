@@ -1,0 +1,31 @@
+{
+  "Architecture Analysis": {},
+  "Domain Modeling": {},
+  "ADR Creation": {},
+  "Spring Boot Development": {},
+  "Hibernate Optimization": {},
+  "REST API Design": {},
+  "JWT Authentication": {},
+  "OAuth2 Integration": {},
+  "Angular Development": {},
+  "RxJS State Management": {},
+  "Database Design": {},
+  "Query Optimization": {},
+  "Database Migration": {},
+  "Docker": {},
+  "Kubernetes": {},
+  "CI/CD": {},
+  "Security Audit": {},
+  "Performance Testing": {},
+  "Regression Testing": {},
+  "Technical Documentation": {},
+  "Feature Documenter": {},
+  "Payroll Processing": {},
+  "Attendance Processing": {},
+  "Leave Management": {},
+  "Nepali Domain": {
+    "skill_path": ".opencode/skills/nepali-domain/SKILL.md"
+  },
+  "Recruitment Workflow": {},
+  "Employee Lifecycle Management": {}
+}

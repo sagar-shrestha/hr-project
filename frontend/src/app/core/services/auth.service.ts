@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { User, AuthResponse } from '../models/user.model';
+import { User } from '../models/user.model';
 import { tap } from 'rxjs/operators';
 
 @Injectable({
@@ -16,22 +16,27 @@ export class AuthService {
   constructor() {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      this.currentUser.set(JSON.parse(savedUser));
+      try {
+        this.currentUser.set(JSON.parse(savedUser));
+      } catch {
+        localStorage.removeItem('user');
+      }
     }
   }
 
   login(credentials: { username: string; password: string }) {
-    return this.http.post<AuthResponse>(`${this.API_URL}/signin`, credentials).pipe(
+    return this.http.post<any>(`${this.API_URL}/signin`, credentials).pipe(
       tap(response => {
+        const data = response.data;
         const user: User = {
-          id: response.id,
-          username: response.username,
-          email: '', // Backend response might not have email in signin, or add placeholder
-          roles: response.roles
+          id: data.id,
+          username: data.username,
+          email: data.email || '',
+          roles: data.roles
         };
         this.currentUser.set(user);
-        this.token.set(response.token);
-        localStorage.setItem('token', response.token);
+        this.token.set(data.token);
+        localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(user));
       })
     );

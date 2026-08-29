@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SidebarService } from '../../core/services/sidebar.service';
 import { AuthService } from '../../core/services/auth.service';
-import { 
-  LucideAngularModule, 
-  LayoutDashboard, 
-  Users, 
-  Calendar, 
-  Briefcase, 
-  TrendingUp, 
-  ChevronLeft, 
+import {
+  LucideAngularModule,
+  LayoutDashboard,
+  Users,
+  Calendar,
+  Briefcase,
+  TrendingUp,
+  ChevronLeft,
   ChevronRight,
   LogOut,
   ShieldCheck
@@ -32,7 +32,7 @@ import { ButtonComponent } from './button.component';
 
     <aside
       [class]="'fixed left-0 top-0 bottom-0 z-40 bg-sidebar border-r border-sidebar-border shadow-soft transition-all duration-300 ease-in-out ' + 
-               (sidebarService.mobileOpen() ? 'translate-x-0' : '-translate-x-full md:translate-x-0')"
+                 (sidebarService.mobileOpen() ? 'translate-x-0' : '-translate-x-full md:translate-x-0')"
       [style.width]="sidebarService.collapsed() ? '80px' : '280px'"
     >
       <div class="flex flex-col h-full bg-sidebar/50 backdrop-blur-md">
@@ -120,14 +120,17 @@ export class DashboardSidebarComponent {
   navigationItems = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { label: 'User Management', path: '/users', icon: Users, role: 'ROLE_ADMIN' },
+    { label: 'Employees', path: '/employees', icon: Users, role: 'ROLE_ADMIN' },
     { label: 'Permissions', path: '/permissions', icon: ShieldCheck, role: 'ROLE_SUPER_ADMIN' },
-    { label: 'Attendance', path: '/dashboard/attendance', icon: Calendar },
+    { label: 'Endpoint Roles', path: '/endpoint-roles', icon: ShieldCheck, role: 'ROLE_MODERATOR' },
+    { label: 'Leaves', path: '/leaves', icon: Calendar },
+    { label: 'Payroll', path: '/payroll', icon: Briefcase, role: 'ROLE_ADMIN' },
     { label: 'Jobs', path: '/dashboard/jobs', icon: Briefcase },
-    { label: 'Reports', path: '/dashboard/reports', icon: TrendingUp },
+    { label: 'Reports & Analytics', path: '/dashboard/reports', icon: TrendingUp },
   ];
 
   hasRole(role: string): boolean {
-    return this.authService.currentUser()?.roles.includes(role) || 
+    return this.authService.currentUser()?.roles.includes(role) ||
            this.authService.currentUser()?.roles.includes('ROLE_SUPER_ADMIN') || false;
   }
 }

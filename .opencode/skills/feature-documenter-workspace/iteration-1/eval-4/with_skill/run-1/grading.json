@@ -1,0 +1,33 @@
+{
+  "expectations": [
+    {
+      "text": "ADR created for Redis caching decision",
+      "passed": true,
+      "evidence": "found in summary"
+    },
+    {
+      "text": "ADR follows template with Context/Decision/Consequences",
+      "passed": true,
+      "evidence": "found in summary"
+    },
+    {
+      "text": "Architecture doc updated to mention caching",
+      "passed": true,
+      "evidence": "found in summary"
+    },
+    {
+      "text": "Changelog created for caching session",
+      "passed": true,
+      "evidence": "found in summary"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "user_notes_summary": {},
+  "eval_feedback": {}
+}

@@ -17,8 +17,13 @@ export const routes: Routes = [
   },
   { path: 'users', canActivate: [authGuard], loadComponent: () => import('./pages/user-management.component').then(m => m.UserManagementComponent) },
   { path: 'users/new', canActivate: [authGuard], loadComponent: () => import('./pages/user-form.component').then(m => m.UserFormComponent) },
+  { path: 'users/:id/edit', canActivate: [authGuard], loadComponent: () => import('./pages/user-form.component').then(m => m.UserFormComponent) },
   { path: 'users/:id', canActivate: [authGuard], loadComponent: () => import('./pages/user-details.component').then(m => m.UserDetailsComponent) },
+  { path: 'employees', canActivate: [authGuard], loadComponent: () => import('./pages/employees.component').then(m => m.EmployeesComponent) },
   { path: 'permissions', canActivate: [authGuard], loadComponent: () => import('./pages/permissions.component').then(m => m.PermissionsComponent) },
+  { path: 'endpoint-roles', canActivate: [authGuard], loadComponent: () => import('./pages/endpoint-roles.component').then(m => m.EndpointRolesComponent) },
+  { path: 'leaves', canActivate: [authGuard], loadComponent: () => import('./pages/leave.component').then(m => m.LeaveComponent) },
+  { path: 'payroll', canActivate: [authGuard], loadComponent: () => import('./pages/payroll.component').then(m => m.PayrollComponent) },
   { path: '', loadComponent: () => import('./pages/index.component').then(m => m.IndexComponent) },
   { path: '**', loadComponent: () => import('./pages/not-found.component').then(m => m.NotFoundComponent) }
 ];
