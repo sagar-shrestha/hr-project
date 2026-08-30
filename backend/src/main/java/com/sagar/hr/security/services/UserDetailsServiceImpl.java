@@ -1,9 +1,9 @@
 package com.sagar.hr.security.services;
 
-import com.sagar.hr.security.model.User;
+import com.sagar.hr.employee.entity.User;
+import com.sagar.hr.employee.repository.EmployeeRepository;
 import com.sagar.hr.security.model.Permission;
 import com.sagar.hr.permission.repository.PermissionRepository;
-import com.sagar.hr.security.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,18 +17,18 @@ import java.util.stream.Collectors;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final PermissionRepository permissionRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository, PermissionRepository permissionRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(EmployeeRepository employeeRepository, PermissionRepository permissionRepository) {
+        this.employeeRepository = employeeRepository;
         this.permissionRepository = permissionRepository;
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
+        User user = employeeRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
         boolean isSuperAdmin = user.getRoles().stream()

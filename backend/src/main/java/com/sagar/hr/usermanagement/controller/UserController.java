@@ -1,6 +1,6 @@
 package com.sagar.hr.usermanagement.controller;
 
-import com.sagar.hr.security.dto.request.SignupRequest;
+import com.sagar.hr.usermanagement.dto.request.CreateUserRequest;
 import com.sagar.hr.usermanagement.dto.request.UpdateUserRequest;
 import com.sagar.hr.usermanagement.dto.response.UserResponse;
 import com.sagar.hr.usermanagement.service.UserService;
@@ -41,8 +41,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<GlobalApiResponse> createUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        UserResponse user = userService.createUser(signUpRequest);
+    public ResponseEntity<GlobalApiResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+        UserResponse user = userService.createUser(createUserRequest);
         return ControllerUtil.created("User created", user);
     }
 

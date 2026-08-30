@@ -8,14 +8,14 @@ import com.sagar.hr.audit.dto.response.RevisionResponse;
 import com.sagar.hr.audit.mapper.AuditMapper;
 import com.sagar.hr.department.model.Department;
 import com.sagar.hr.employee.entity.Employee;
+import com.sagar.hr.employee.entity.User;
+import com.sagar.hr.endpoint.entity.Endpoint;
 import com.sagar.hr.leave.entity.LeaveBalance;
 import com.sagar.hr.leave.entity.LeaveRequest;
 import com.sagar.hr.payroll.model.SalaryStructure;
 import com.sagar.hr.reporting.model.Attendance;
-import com.sagar.hr.security.model.EndpointRole;
 import com.sagar.hr.security.model.Permission;
 import com.sagar.hr.security.model.Role;
-import com.sagar.hr.security.model.User;
 import com.sagar.hr.util.exception.NotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class AuditService {
             Map.entry("user", User.class),
             Map.entry("role", Role.class),
             Map.entry("permission", Permission.class),
-            Map.entry("endpoint-role", EndpointRole.class)
+            Map.entry("endpoint", Endpoint.class)
     );
 
     private final EntityManager entityManager;

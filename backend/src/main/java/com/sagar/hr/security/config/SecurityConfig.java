@@ -1,10 +1,8 @@
 package com.sagar.hr.security.config;
 
-import com.sagar.hr.security.auth_manager.DynamicAuthorizationManager;
 import com.sagar.hr.security.jwt.AuthEntryPointJwt;
 import com.sagar.hr.security.jwt.AuthTokenFilter;
 import com.sagar.hr.security.jwt.JwtUtils;
-import com.sagar.hr.endpointrole.repository.EndpointRoleRepository;
 import com.sagar.hr.security.services.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +11,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,14 +68,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DynamicAuthorizationManager dynamicAuthorizationManager(
-            EndpointRoleRepository endpointRoleRepository, RoleHierarchy roleHierarchy) {
-        return new DynamicAuthorizationManager(endpointRoleRepository, roleHierarchy);
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, DynamicAuthorizationManager dynamicAuthorizationManager)
-            throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer::disable)
                 .cors(org.springframework.security.config.Customizer.withDefaults())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
@@ -89,7 +79,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/swagger-ui.html")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
-                        .anyRequest().access(dynamicAuthorizationManager));
+                        .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
 

@@ -1,6 +1,6 @@
 package com.sagar.hr.leave.entity;
 
-import com.sagar.hr.security.model.User;
+import com.sagar.hr.employee.entity.User;
 import com.sagar.hr.util.audit.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.*;

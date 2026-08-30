@@ -1,5 +1,5 @@
 {
-  "known_modules": ["permission", "user", "security", "roles", "util"],
+  "known_modules": ["permission", "user", "security", "roles", "util", "screens", "modules", "privileges", "endpoint", "employee"],
   "patterns_used": [
     "Controller-Service-Repository",
     "Constructor Injection",
@@ -12,11 +12,28 @@
     "Fixed circular dependency in SecurityConfig",
     "Renamed base package to com.sagar.hr and refactored layout",
     "Added GlobalExceptionHandler and GlobalApiResponse wrappers under com.sagar.hr.util",
-    "Refactored API paths to use /api/v1 versioned endpoints in backend and frontend"
+    "Refactored API paths to use /api/v1 versioned endpoints in backend and frontend",
+    "Added screens CRUD module (com.sagar.hr.screens) with entity/repo/service/controller/DTOs/mapper + V23/V24 migrations",
+    "Added modules CRUD module (com.sagar.hr.modules) with ManyToOne relation to screens + V25/V26 migrations",
+    "Modules->screens relation is ManyToOne (one screen can have many modules); screens_id FK indexed, not unique",
+    "Screens now has @OneToMany modules (cascade ALL, orphanRemoval) ; create/update screens accept optional modules[] to persist in one transaction; ScreensResponse includes modules",
+    "Privileges CRUD module (com.sagar.hr.privileges) mirrors Screens standalone: id/name/code/status, soft delete, migrations V27+V28, endpoint /api/v1/privileges",
+    "Modules<->Privileges ManyToMany unidirectional on Modules (owning), @JoinTable modules_privileges_mapping (module_id, privilege_id) + modules_privileges_mapping_AUD; create/update modules accept privilegeIds; ModulesResponse shows privileges (id/name/code/status)",
+    "Endpoint CRUD module (com.sagar.hr.endpoint) replaces removed endpointrole module; fields id/name/code/url_pattern/http_method/status; endpoint_roles table + DynamicAuthorizationManager REMOVED (V31 drops tables); SecurityConfig now anyRequest().authenticated() — access = any JWT-authenticated user, no role checks; AuditService registers 'endpoint'",
+    "Endpoint<->module+privilege mapping: V32 modules_privileges_mapping_endpoints_mapping link table (module_id, privilege_id, endpoint_id, UNIQUE triple, indexed endpoint_id); ModulesPrivilegesMappingEndpoints entity lives in com.sagar.hr.endpoint.entity (ManyToOne to Modules/Privileges/Endpoint); Endpoint.mappings @OneToMany cascade ALL + orphanRemoval; EndpointController.saveEndpoint (POST /api/v1/endpoints) accepts modulePrivileges[] of {moduleId, privilegeId}; EndpointResponse exposes mapped pairs; attach via endpoint.getMappings().add() cascade (do NOT repo.save() separately)",
+    "Option B FINAL (confirmed): class User extends Employee. Both live in com.sagar.hr.employee.entity (NOT security.model). Employee is the SINGLE_TABLE inheritance ROOT (@Entity @Table users @Inheritance(SINGLE_TABLE) @DiscriminatorColumn user_type @DiscriminatorValue EMPLOYEE @Audited @SuperBuilder) holding @Id @GeneratedValue id + HR profile ONLY (name/nameNepali/phone/citizenship/pan/nid/department/designation/employeeCode/DOB+BS/joinDate+BS/status). User is the SUBCLASS (@Entity @DiscriminatorValue USER, extends Employee, @SuperBuilder) holding the LOGIN fields ONLY: username/email/password + roles (@ManyToMany users_roles_association, user_id/role_id). JPA requires @Id stays on the root Employee (a root without @Id fails 'No identifier specified'). A User IS an Employee, so a User row can also store profile in inherited columns on the same USER row. user_type='EMPLOYEE' rows = profile-only (no login columns mapped). SINGLE_TABLE + same user_type values => NO new migration needed (V33/V34 already define the shape).",
+    "Repository: EmployeeRepository (com.sagar.hr.employee.repository, JpaRepository<Employee,Long>) stays the single root repo. Because username/email live on the User subclass (NOT Employee), login lookups must be User-typed JPQL: findByUsername/findByEmail/findUserById return Optional<User> (@Query 'SELECT u FROM User u WHERE ...'); existsByUsername/existsByEmail are CASE-WHEN COUNT JPQL over User. Profile finders (findByEmployeeCode/findByCitizenshipNumber/findByPanNumber) return Optional<Employee>. TYPE-filtered findAllEmployees()/findEmployeeById(id) (JPQL TYPE(e)=Employee) back GET /api/v1/employees (pure EMPLOYEE rows). Legacy native promoteToEmployee kept (flips USER->EMPLOYEE; unused by UserService now). Login: UserDetailsServiceImpl queries findByUsername returning Optional<User>; UserDetailsImpl.build(User,...). LeaveRequest/LeaveBalance user+approvedBy associations typed User. UserMapper.toResponse(User) sets isEmployee = user.getName()!=null (instanceof can't distinguish since a User IS-an Employee). UserService account ops use findUserById -> User; profile data filled via inherited setters on a USER row (do NOT flip to EMPLOYEE — that would lose login). @SuperBuilder across Employee/User/AuditableEntity; @Builder.Default INVALID under @SuperBuilder.",
+    "Employee.roles @ManyToMany join table is users_roles_association, explicitly CREATE TABLE'd in V34__Create_Users_Roles_Association.sql (user_id/role_id PK + FKs to users,roles) — NOT a rename of the legacy user_roles. V34 also migrates any existing user_roles rows, DROP TABLE user_roles, and renames user_roles_AUD -> users_roles_association_AUD (fk_user_roles_aud_rev -> fk_users_roles_association_aud_rev). @JoinTable columns stay user_id/role_id. Only Employee.java references it (no native SQL on the old name). Any role-assignment code must not reference the old user_roles table name.",
   ],
   "known_risks": [
     "Potential circular dependencies if field injection is used for Security beans",
-    "Ensure all new endpoints/controllers are mapped under /api/v1 and catch errors via GlobalExceptionHandler"
+    "Ensure all new endpoints/controllers are mapped under /api/v1 and catch errors via GlobalExceptionHandler",
+    "New @Audited entities require a *_AUD table created by migration because ddl-auto is validate",
+    "User extends Employee: login fields (username/email/password/roles) are on the User subclass only, NOT on Employee. Any code doing account/login lookups MUST use the User-typed queries (findByUsername/findByEmail/findUserById returning Optional<User>) or cast; code holding a root Employee cannot call getUsername()/getEmail()/getPassword()/getRoles(). user_type='EMPLOYEE' rows have no login columns mapped (can't authenticate). User/Employee live in employee.entity to avoid a package cycle with security.model.Role.",
+    "GET /api/v1/employees uses findAllEmployees()/findEmployeeById() (TYPE=Employee). EmployeeRepository.findAll() returns the full polymorphic set (Employee + User). Do NOT treat findAll() as the employee listing, and do not call employee-only code on it.",
+    "Creating/updating an account WITH a profile must keep it a User (USER row) and set inherited profile fields — do NOT flip user_type to EMPLOYEE or the account loses login. promoteToEmployee native (USER->EMPLOYEE) is a legacy path only."
   ],
-  "open_issues": []
+  "open_issues": [
+    "Runtime ddl-auto:validate for V33 (Envers users_AUD shape, SINGLE_TABLE inheritance) not yet exercised — Postgres + Redis must run and V33 applied to confirm."
+  ]
 }

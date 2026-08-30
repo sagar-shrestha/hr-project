@@ -24,6 +24,7 @@ public class EmployeeResponse {
     private String phone;
     private String citizenshipNumber;
     private String panNumber;
+    private String nidNumber;
     private Long departmentId;
     private String departmentName;
     private String designation;

@@ -15,4 +15,7 @@ public class UserResponse {
     private String username;
     private String email;
     private Set<String> roles;
+    private boolean isEmployee;
+
+    private EmployeeProfileResponse employeeProfile;
 }

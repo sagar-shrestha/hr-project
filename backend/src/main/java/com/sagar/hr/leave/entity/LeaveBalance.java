@@ -1,14 +1,9 @@
 package com.sagar.hr.leave.entity;
 
-import com.sagar.hr.security.model.User;
+import com.sagar.hr.employee.entity.User;
 import com.sagar.hr.util.audit.AuditableEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.envers.Audited;
 
 import java.math.BigDecimal;

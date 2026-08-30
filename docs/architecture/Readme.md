@@ -7,6 +7,7 @@ Monolithic Spring Boot backend with a JWT-secured REST API. PostgreSQL for persi
 ## Module Structure
 
 - **Auth / Security** — JWT authentication, role-based & dynamic endpoint authorization
+- **User Management / Employee** — unified account + employee profile model (`User extends Employee`, SINGLE_TABLE in `users`, V33); employee writes under `/api/v1/users`, `/api/v1/employees` read-only
 - **Permission** — permission management
 - **Payroll** — salary computation with decorator-based caching (Spring Cache + Redis)
 - **Audit** — Hibernate Envers audit trail; every entity extends `AuditableEntity`, revisions stored in `revinfo` + `*_AUD` tables, history exposed via `/api/v1/audit/{entity}/{id}`

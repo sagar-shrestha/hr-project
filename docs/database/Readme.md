@@ -28,9 +28,63 @@
 | created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Row creation timestamp |
 | updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Row update timestamp |
 
+## modules_privileges_mapping
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| module_id | BIGINT | PK, FK → modules(id) | Module in the mapping |
+| privilege_id | BIGINT | PK, FK → privileges(id) | Privilege in the mapping |
+
+Many-to-many join table (Modules ↔ Privileges); composite PK `(module_id, privilege_id)`. Audited via `modules_privileges_mapping_AUD`.
+
+## modules_privileges_mapping_endpoints_mapping
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | BIGSERIAL | PK | Auto-generated ID |
+| module_id | BIGINT | NOT NULL, FK → modules(id) | Module in the pair |
+| privilege_id | BIGINT | NOT NULL, FK → privileges(id) | Privilege in the pair |
+| endpoint_id | BIGINT | NOT NULL, FK → endpoints(id) | Linked endpoint |
+| active | BOOLEAN | NOT NULL, DEFAULT true | Row active flag |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Row creation timestamp |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Row update timestamp |
+
+Many-to-many link between `modules_privileges_mapping` module+privilege pairs and `endpoints`; one row per (module, privilege) pair linked to an endpoint. UNIQUE `(module_id, privilege_id, endpoint_id)`, indexed on `endpoint_id`. Audited via `modules_privileges_mapping_endpoints_mapping_AUD`.
+
+## users
+
+Since V33, `users` is the single table for both authentication accounts and employee profiles via JPA `SINGLE_TABLE` inheritance (`User extends Employee`). Row type is discriminated by `user_type` (`USER` or `EMPLOYEE`). The former `employees` table was dropped.
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | BIGSERIAL | PK | User (and employee) identity |
+| username | VARCHAR(50) | NOT NULL, UNIQUE | Login username |
+| email | VARCHAR(50) | NOT NULL, UNIQUE | Login email |
+| password | VARCHAR(255) | NOT NULL | Encoded password |
+| user_type | VARCHAR(20) | NOT NULL, DEFAULT 'USER' | Discriminator: USER / EMPLOYEE |
+| name | VARCHAR(255) | | Employee name (English) |
+| name_nepali | VARCHAR(255) | | Employee name (Nepali / NVARCHAR) |
+| phone | VARCHAR(20) | | Employee phone |
+| citizenship_number | VARCHAR(50) | UNIQUE (partial) | Citizenship number |
+| pan_number | VARCHAR(20) | UNIQUE (partial) | PAN (encrypted at rest) |
+| nid_number | VARCHAR(50) | UNIQUE (partial) | NID number |
+| department_id | BIGINT | FK → departments(id) | Employee department |
+| designation | VARCHAR(100) | | Employee designation |
+| employee_code | VARCHAR(50) | UNIQUE (partial) | Employee code |
+| date_of_birth | DATE | | A.D. date of birth |
+| date_of_birth_bs | VARCHAR(10) | | B.S. date of birth (YYYY-MM-DD) |
+| join_date | DATE | | A.D. join date |
+| join_date_bs | VARCHAR(10) | | B.S. join date (YYYY-MM-DD) |
+| status | VARCHAR(20) | NOT NULL, DEFAULT 'ACTIVE' | Employee status |
+| created_at / updated_at | TIMESTAMP | NOT NULL | Auditing timestamps |
+| created_by / updated_by | VARCHAR(100) | | Auditing user |
+| active | BOOLEAN | NOT NULL, DEFAULT true | Row active flag |
+
+`users_AUD` (V33) now includes all employee profile columns. FKs from `attendance`, `time_logs`, `overtime_records`, `salary_structures` that previously pointed at `employees(id)` now point at `users(id)`.
+
 ## Audit Trail (Hibernate Envers)
 
-Every audited entity gets a `*_AUD` table holding one row per revision (`revtype`: 0=ADD, 1=MOD, 2=DEL). All domain and security entities are audited: `employees_AUD`, `departments_AUD`, `leave_requests_AUD`, `leave_balances_AUD`, `salary_structures_AUD`, `shifts_AUD`, `time_logs_AUD`, `overtime_records_AUD`, `attendance_AUD`, `users_AUD`, `roles_AUD`, `permissions_AUD`, `endpoint_roles_AUD`, plus join tables `user_roles_AUD` and `role_permissions_AUD`.
+Every audited entity gets a `*_AUD` table holding one row per revision (`revtype`: 0=ADD, 1=MOD, 2=DEL). All domain and security entities are audited: `departments_AUD`, `leave_requests_AUD`, `leave_balances_AUD`, `salary_structures_AUD`, `shifts_AUD`, `time_logs_AUD`, `overtime_records_AUD`, `attendance_AUD`, `users_AUD`, `roles_AUD`, `permissions_AUD`, `screens_AUD`, `modules_AUD`, `privileges_AUD`, `endpoints_AUD`, `modules_privileges_mapping_endpoints_mapping_AUD`, plus join tables `users_roles_association_AUD`, `role_permissions_AUD`, and `modules_privileges_mapping_AUD`. (`employees_AUD` was dropped with the `employees` table in V33; `endpoint_roles_AUD` was removed with the `endpoint_roles` table in V31.) `users_AUD` now also carries the employee profile columns added in V33.
 
 ### revinfo
 
@@ -68,3 +122,17 @@ V15 also added `created_by`, `updated_by`, `active` (and missing `created_at`/`u
 | V18 | V18__Align_Schema_With_Entities.sql | Align salary_structures money columns to NUMERIC(38,2); add missing time_logs shift_id FK |
 | V19 | V19__Add_Status_To_Departments.sql | Add status column to departments (+ departments_AUD) |
 | V20 | V20__Seed_Department_And_Leave_Endpoint_Roles.sql | Seed endpoint_roles for department and leave endpoints |
+| V21 | V21__User_Employee_Link.sql | Link users to employees |
+| V22 | V22__Add_User_Id_To_Employees_Aud.sql | Add user_id to employees_AUD |
+| V23 | V23__Create_Screens_Table.sql | Create screens table + screens_AUD |
+| V24 | V24__Seed_Screens_Endpoint_Roles.sql | Seed endpoint roles for screens endpoints |
+| V25 | V25__Create_Modules_Table.sql | Create modules table + modules_AUD (screens_id FK) |
+| V26 | V26__Seed_Modules_Endpoint_Roles.sql | Seed endpoint roles for modules endpoints |
+| V27 | V27__Create_Privileges_Table.sql | Create privileges table + privileges_AUD |
+| V28 | V28__Seed_Privileges_Endpoint_Roles.sql | Seed endpoint roles for privileges endpoints |
+| V29 | V29__Create_Modules_Privileges_Mapping_Table.sql | Create modules_privileges_mapping join table + AUD |
+| V30 | V30__Create_Endpoints_Table.sql | Create endpoints table + endpoints_AUD |
+| V31 | V31__Drop_Endpoint_Roles.sql | Drop endpoint_roles + endpoint_roles_AUD (auth now = any authenticated user) |
+| V32 | V32__Create_Modules_Privileges_Mapping_Endpoints_Mapping_Table.sql | Create modules_privileges_mapping_endpoints_mapping link table (module+privilege pairs ↔ endpoints) + AUD |
+| V33 | V33__Merge_Employees_Into_Users.sql | Merge employees into users via SINGLE_TABLE inheritance (Employee extends User); add user_type + employee columns to users, re-point employee_id FKs, drop employees + employees_AUD |
+| V34 | V34__Create_Users_Roles_Association.sql | Explicitly create users_roles_association join table (user_id/role_id, PK, FKs); migrate data from legacy user_roles then drop it; rename user_roles_AUD to users_roles_association_AUD |

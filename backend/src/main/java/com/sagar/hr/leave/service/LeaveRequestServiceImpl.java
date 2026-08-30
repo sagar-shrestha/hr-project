@@ -12,8 +12,8 @@ import com.sagar.hr.leave.exception.InsufficientLeaveBalanceException;
 import com.sagar.hr.leave.mapper.LeaveMapper;
 import com.sagar.hr.leave.repository.LeaveBalanceRepository;
 import com.sagar.hr.leave.repository.LeaveRequestRepository;
-import com.sagar.hr.security.model.User;
-import com.sagar.hr.security.repository.UserRepository;
+import com.sagar.hr.employee.entity.User;
+import com.sagar.hr.employee.repository.EmployeeRepository;
 import com.sagar.hr.util.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,13 +46,13 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     private final LeaveRequestRepository leaveRequestRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
-    private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final LeaveMapper leaveMapper;
 
     @Override
     @Transactional
     public LeaveResponse applyLeave(Long userId, ApplyLeaveRequest request) {
-        User user = userRepository.findById(userId)
+        User user = employeeRepository.findUserById(userId)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_WITH_ID + userId));
 
         if (request.getStartDate().isAfter(request.getEndDate())) {
@@ -100,7 +100,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
             throw new IllegalStateException("Leave request is already " + leaveRequest.getStatus().name().toLowerCase());
         }
 
-        User approver = userRepository.findById(approverId)
+        User approver = employeeRepository.findUserById(approverId)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_WITH_ID + approverId));
 
         leaveRequest.setStatus(LeaveStatus.APPROVED);
@@ -131,7 +131,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
             throw new IllegalStateException("Leave request is already " + leaveRequest.getStatus().name().toLowerCase());
         }
 
-        User approver = userRepository.findById(approverId)
+        User approver = employeeRepository.findUserById(approverId)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + approverId));
 
         leaveRequest.setStatus(LeaveStatus.REJECTED);
@@ -145,7 +145,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     @Override
     public List<LeaveBalanceResponse> viewBalance(Long userId) {
-        if (!userRepository.existsById(userId)) {
+        if (!employeeRepository.existsById(userId)) {
             throw new NotFoundException("User not found with id: " + userId);
         }
 
@@ -188,7 +188,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     @Override
     @Transactional
     public void initializeLeaveBalance(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = employeeRepository.findUserById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
 
         int currentYear = LocalDate.now().getYear();

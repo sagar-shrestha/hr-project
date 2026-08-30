@@ -4,24 +4,35 @@ import com.sagar.hr.department.model.Department;
 import com.sagar.hr.util.audit.AuditableEntity;
 import com.sagar.hr.util.enums.Status;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
 
 import java.time.LocalDate;
 
+/**
+ * Root of the {@code users} SINGLE_TABLE hierarchy.
+ *
+ * Holds the primary key and the HR profile fields. A row with
+ * {@code user_type = 'EMPLOYEE'} is instantiated as this class directly and
+ * carries profile-only data. {@link User} extends this class to add the login
+ * fields ({@code username}/{@code email}/{@code password}/{@code roles}).
+ */
 @Entity
-@Table(name = "employees", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email"),
-        @UniqueConstraint(columnNames = "citizenship_number"),
-        @UniqueConstraint(columnNames = "pan_number"),
-        @UniqueConstraint(columnNames = "employee_code")
-})
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type")
+@DiscriminatorValue("EMPLOYEE")
 @Getter
 @Setter
-@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 @Audited
 public class Employee extends AuditableEntity {
 
@@ -35,24 +46,24 @@ public class Employee extends AuditableEntity {
     @Column(name = "name_nepali")
     private String nameNepali;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
     private String phone;
 
-    @Column(name = "citizenship_number", unique = true)
+    @Column(name = "citizenship_number")
     private String citizenshipNumber;
 
-    @Column(name = "pan_number", unique = true)
+    @Column(name = "pan_number")
     private String panNumber;
 
+    @Column(name = "nid_number")
+    private String nidNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id", foreignKey = @ForeignKey(name = "fk_employee_department_id"), referencedColumnName = "id")
+    @JoinColumn(name = "department_id", foreignKey = @ForeignKey(name = "fk_user_department_id"), referencedColumnName = "id")
     private Department department;
 
     private String designation;
 
-    @Column(name = "employee_code", unique = true)
+    @Column(name = "employee_code")
     private String employeeCode;
 
     @Column(name = "date_of_birth")

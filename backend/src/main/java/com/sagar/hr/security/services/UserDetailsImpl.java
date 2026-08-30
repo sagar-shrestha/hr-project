@@ -1,6 +1,6 @@
 package com.sagar.hr.security.services;
 
-import com.sagar.hr.security.model.User;
+import com.sagar.hr.employee.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
